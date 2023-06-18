@@ -1,6 +1,6 @@
 import { Toys, Scanner, Core } from 'spherov2.js';
 
-const robot = `${process.argv[2]}-`;
+const robot = `SM-`;
 export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
   console.log(process.argv[2]);
   console.log(`Looking for ${robot}...`);

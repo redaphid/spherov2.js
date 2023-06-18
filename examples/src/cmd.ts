@@ -1,4 +1,4 @@
-import { SpheroMini, Utils } from 'spherov2.js';
+import { SpheroMini, Utils, Event } from 'spherov2.js';
 import { emitKeypressEvents } from 'readline';
 import { starter } from './utils/starter';
 // SORRY FOR THIS CODE, It is my playground for now
@@ -10,18 +10,34 @@ const cmdPlay = (toy: SpheroMini) => {
   let executing = true;
   let calibrating = false;
   let offset = 0;
-
+  let health = 100;
+  toy.configureCollisionDetection();
   const cancelPress = () => {
     clearTimeout(pressTimeout);
     pressTimeout = null;
   };
-
+  // a function that takes health from 0-100 and returns red,green,and blue in an array
+  const setHealthLight = (health: number) => {
+    if (health > 50) {
+      toy.setMainLedColor(0, 255, 0);
+    } else if (health > 25) {
+      toy.setMainLedColor(255, 255, 0);
+    } else {
+      toy.setMainLedColor(255, 0, 0);
+    }
+  }
+  setHealthLight(health)
   const addTimeout = () => {
     pressTimeout = setTimeout(() => {
       currentSpeed = 0;
     }, 500);
   };
-
+  toy.on(Event.onCollision, () => {
+    health-=10
+    console.log({health})
+    console.log('COLLISION');
+    setHealthLight(health)
+  })
   const loop = async () => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
