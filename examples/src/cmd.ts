@@ -1,7 +1,6 @@
 import { SpheroMini, Utils } from 'spherov2.js';
 import { emitKeypressEvents } from 'readline';
 import { starter } from './utils/starter';
-
 // SORRY FOR THIS CODE, It is my playground for now
 const cmdPlay = (toy: SpheroMini) => {
   let pressTimeout: NodeJS.Timer;
