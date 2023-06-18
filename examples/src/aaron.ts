@@ -18,22 +18,22 @@ const cmdPlay = (toy: SpheroMini) => {
   };
   // a function that takes health from 0-100 and returns a gradient from green to red
   const setHealthLight = (health: number) => {
-    const red = Math.floor(255 * (health / 100))
-    const green = Math.floor(255 * ((100 - health) / 100))
-    toy.setMainLedColor(red, green, 0)
-  }
-  setHealthLight(health)
+    const red = Math.floor(255 * (health / 100));
+    const green = Math.floor(255 * ((100 - health) / 100));
+    toy.setMainLedColor(red, green, 0);
+  };
+  setHealthLight(health);
   const addTimeout = () => {
     pressTimeout = setTimeout(() => {
       currentSpeed = 0;
     }, 500);
   };
   toy.on(Event.onCollision, () => {
-    health-=10
-    console.log({health})
+    health -= 10;
+    console.log({ health });
     console.log('COLLISION');
-    setHealthLight(health)
-  })
+    setHealthLight(health);
+  });
   const loop = async () => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
