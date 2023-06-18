@@ -7,12 +7,13 @@ export const toPromise = (
   args?: any[]
 ) => {
   return new Promise((resolve, reject) => {
+    console.log('toPromise', binding, fn, args);
     const safeArgs = args || [];
     fn.bind(binding)(...safeArgs, (err: Error, ...retArgs: any[]) => {
       if (err) {
         reject(err);
       } else {
-        resolve(...retArgs);
+        resolve(retArgs || null);
       }
     });
   });
