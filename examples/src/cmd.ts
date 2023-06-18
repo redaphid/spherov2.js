@@ -16,15 +16,11 @@ const cmdPlay = (toy: SpheroMini) => {
     clearTimeout(pressTimeout);
     pressTimeout = null;
   };
-  // a function that takes health from 0-100 and returns red,green,and blue in an array
+  // a function that takes health from 0-100 and returns a gradient from green to red
   const setHealthLight = (health: number) => {
-    if (health > 50) {
-      toy.setMainLedColor(0, 255, 0);
-    } else if (health > 25) {
-      toy.setMainLedColor(255, 255, 0);
-    } else {
-      toy.setMainLedColor(255, 0, 0);
-    }
+    const red = Math.floor(255 * (health / 100))
+    const green = Math.floor(255 * ((100 - health) / 100))
+    toy.setMainLedColor(red, green, 0)
   }
   setHealthLight(health)
   const addTimeout = () => {
