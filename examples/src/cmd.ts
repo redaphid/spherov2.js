@@ -86,12 +86,12 @@ const start = (toy: SpheroMini) => {
       c: async () => {
         if (calibrating) {
           calibrating = false;
-          await toy.setBackLedIntensity(0);
+          toy.setBackLedIntensity(0);
           offset = heading;
           heading = 0;
           return;
         }
-        await toy.setBackLedIntensity(255);
+        toy.setBackLedIntensity(255);
         currentSpeed = 0;
         executing = true;
         heading = 0;
