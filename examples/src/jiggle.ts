@@ -30,10 +30,10 @@ const cmdPlay = async (toy: SpheroMini) => {
       }
 
       if (timeSinceLastCollision > collisionTimeout) heading += Math.random() * (10 + speed) // jiggle if we haven't collided recently
-      if(Math.random() < 0.01) heading += 180
+      if(Math.random() < 0.01) heading += 180 // randomly turn around some of the time
       heading = heading % 360 // keep heading between 0 and 360
 
-      if (Math.random() < 0.01) speed = 25 // randomly start moving 0.5% of the time
+      if (Math.random() < 0.01) speed = 25 // randomly start moving some of the time
       let speedToGo = speed * 10 + 100;
       if(timeSinceLastCollision < collisionTimeout) speedToGo = 1000 // if we've collided recently, stop
       await toy.roll(speedToGo, heading, [])
