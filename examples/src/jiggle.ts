@@ -17,10 +17,6 @@ const cmdPlay = async (toy: SpheroMini) => {
       return
     }
 
-    if (timeSinceLastCollision > 100) heading += Math.random() * 100 // only jiggle if we haven't collided recently
-
-    if (Math.random() < 0.005) speed = 200 // randomly start moving 0.5% of the time
-
     if (speed > 0) { // move mode
       speed -= 1
       if (timeSinceLastCollision > 100) toy.setMainLedColor(0, 255, 0) // show green (move mode)
@@ -30,7 +26,13 @@ const cmdPlay = async (toy: SpheroMini) => {
         if (Math.random() < 0.01) cooldown = 5000 // 1% of the time, stop for 5 seconds
       }
     }
+
+    if (timeSinceLastCollision > 100) heading += Math.random() * 100 // jiggle if we haven't collided recently
+
     heading = heading % 360 // keep heading between 0 and 360
+
+    if (Math.random() < 0.005) speed = 200 // randomly start moving 0.5% of the time
+
     toy.roll(speed, heading, [])
   }
 
