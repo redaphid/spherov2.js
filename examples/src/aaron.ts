@@ -1,4 +1,4 @@
-import { SpheroMini, Utils, Event } from 'spherov2.js';
+import { SpheroMini, Utils, Event } from '../../lib';
 import { emitKeypressEvents } from 'readline';
 import { starter } from './utils/starter';
 // SORRY FOR THIS CODE, It is my playground for now

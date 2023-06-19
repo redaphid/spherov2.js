@@ -1,5 +1,5 @@
 import nimbus, { IControllerState } from './nimbus';
-import { SpheroMini, Utils } from 'spherov2.js';
+import { SpheroMini, Utils } from '../../lib';
 
 let state: IControllerState;
 nimbus.onChanged((_state) => {

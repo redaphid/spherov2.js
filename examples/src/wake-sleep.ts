@@ -1,7 +1,7 @@
 import { starter } from './utils/starter';
-import { Utils } from 'spherov2.js';
+import { Utils } from '../../lib';
 import { exit } from 'shelljs';
-import { RollableToy } from 'spherov2.js';
+import { RollableToy } from '../../lib';
 
 export const wakeSleep = async (toy: RollableToy) => {
   await toy.setMainLedColor(255, 0, 0);

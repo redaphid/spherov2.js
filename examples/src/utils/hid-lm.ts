@@ -1,5 +1,5 @@
 import nimbus, { IControllerState } from './nimbus';
-import { LightningMcQueen, Utils } from 'spherov2.js';
+import { LightningMcQueen, Utils } from '../../lib';
 
 let state: IControllerState;
 nimbus.onChanged((_state) => {

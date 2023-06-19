@@ -1,4 +1,4 @@
-import { Scanner, SpheroMini, Event, Utils } from 'spherov2.js';
+import { Scanner, SpheroMini, Event, Utils } from '../../lib';
 
 const beep = async (sphero: SpheroMini) => {
   await sphero.setMainLedColor(0xff, 0, 0);

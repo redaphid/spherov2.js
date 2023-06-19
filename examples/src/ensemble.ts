@@ -1,4 +1,4 @@
-import { Scanner, Core, SpheroMini, Utils } from 'spherov2.js';
+import { Scanner, Core, SpheroMini, Utils } from '../../lib';
 
 const WAIT_TIME = 100;
 

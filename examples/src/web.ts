@@ -1,4 +1,4 @@
-import { Toys, Scanner, Core } from 'spherov2.js';
+import { Toys, Scanner, Core } from '../../lib';
 import { patrol } from './utils/patrol';
 
 const robot = `SB-`;

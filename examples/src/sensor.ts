@@ -1,4 +1,4 @@
-import { Event, Utils, ICommandWithRaw, RollableToy } from 'spherov2.js';
+import { Event, Utils, ICommandWithRaw, RollableToy } from '../../lib';
 import { starter } from './utils/starter';
 
 const main = async (sphero: RollableToy) => {
