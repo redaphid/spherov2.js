@@ -8,6 +8,7 @@ const cmdPlay = async (toy: SpheroMini) => {
   let waitTime = 10
   let timeSinceLastCollision = 9999
   toy.on(Event.onCollision, (e) => {
+    if(timeSinceLastCollision < 100) return // ignore collisions that are too close together
     speed+=500 // if we collide, speed up by 500. this will switch us to "move mode"
     heading += 180 // and turn around
     console.log('collide')
