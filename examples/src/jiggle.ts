@@ -16,9 +16,8 @@ const cmdPlay = async (toy: SpheroMini) => {
     // turn the led red
     toy.setMainLedColor(255, 0, 0)
   })
+
   const loop = async () => {
-    while (true) {
-      await Utils.wait(waitTime)
       timeSinceLastCollision += waitTime
       heading += 50 // rotate 50 degrees per interval
       waitTime = 10
@@ -36,10 +35,8 @@ const cmdPlay = async (toy: SpheroMini) => {
       }
       heading = heading % 360 // keep heading between 0 and 360
       toy.roll(speed, heading, [])
-    }
   }
-
-  loop();
+  setInterval(loop, waitTime)
 };
 
 starter(cmdPlay);
