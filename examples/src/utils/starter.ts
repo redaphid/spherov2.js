@@ -1,4 +1,4 @@
-import { Toys, Scanner, Core } from '../../lib';
+import { Toys, Scanner, Core } from '../../../lib';
 
 const robot = `SM-`;
 export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
