@@ -18,7 +18,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       if (speed > 0) { // move mode
         console.log({speed})
         speed -= 1
-        if (timeSinceLastCollision > collisionTimeout) toy.setMainLedColor(0, speed > 255? 255: speed, 0) // show green (move mode)
+        if (timeSinceLastCollision > collisionTimeout) toy.setMainLedColor(0, 255, 0) // show green (move mode)
       } else {
         if (timeSinceLastCollision > collisionTimeout) {
           await toy.setMainLedColor(0, 0, 255) // show blue (idle mode)
