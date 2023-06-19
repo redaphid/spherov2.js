@@ -11,8 +11,6 @@ const start = (toy: SpheroMini) => {
   let calibrating = false;
   let offset = 0;
 
-  toy.configureSensorStream();
-
   const cancelPress = () => {
     clearTimeout(pressTimeout);
     pressTimeout = null;
@@ -24,7 +22,8 @@ const start = (toy: SpheroMini) => {
     }, 500);
   };
 
-  const loop = async () => {
+  const loop = async (sensorData:any) => {
+    console.log(sensorData)
     if (executing) {
       toy.roll(
         currentSpeed,
@@ -100,6 +99,8 @@ const start = (toy: SpheroMini) => {
     }
     if (keyToActionMap[key]) keyToActionMap[key]();
   };
+
+  toy.configureSensorStream();
   emitKeypressEvents(process.stdin);
   process.stdin.setRawMode(true);
   process.stdin.on('keypress', onKeyPress);
