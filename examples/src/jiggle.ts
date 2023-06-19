@@ -9,7 +9,7 @@ const cmdPlay = (toy: SpheroMini) => {
   })
   const loop = async () => {
     while (true) {
-      heading += 10
+      heading += 50
       heading = heading % 360
       toy.roll(0.1, heading, [])
       await Utils.wait(100);
