@@ -1,12 +1,12 @@
 import { SpheroMini, Event } from '../../lib'
 import { starter } from './utils/starter'
-let heading = 0
-let speed = 0
+
 const cmdPlay = async (toy: SpheroMini) => {
-  await toy.configureCollisionDetection()
-  let waitTime = 10
+  const waitTime = 10
   let timeSinceLastCollision = 9999
-  let cooldown = 0
+  let heading, speed, cooldown = 0
+
+  await toy.configureCollisionDetection()
 
   const loop = async () => {
     timeSinceLastCollision += waitTime
