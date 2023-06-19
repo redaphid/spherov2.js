@@ -39,7 +39,6 @@ const cmdPlay = async (toy: SpheroMini) => {
       await toy.roll(speedToGo, heading, [])
     } catch (e) {
       console.log(e);
-      waitTime++;
       cooldown = 100
     }
     await timeout(waitTime)
