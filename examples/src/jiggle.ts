@@ -16,25 +16,25 @@ const cmdPlay = async (toy: SpheroMini) => {
     toy.setMainLedColor(255, 0, 0)
   })
   const loop = async () => {
-    timeSinceLastCollision += waitTime
     while (true) {
+      await Utils.wait(waitTime)
+      timeSinceLastCollision += waitTime
       heading += 50 // rotate 50 degrees per interval
       waitTime = 10
       if(Math.random() > 0.995) speed=200 // randomly start moving 1% of the time
       if(speed > 0) {
         speed -= 1 // slow down by 1
-        waitTime = 30
-        heading = ( heading + Math.random() * 100 ) % 360 // randomly change direction
-        if(timeSinceLastCollision < 100) continue
+        if(timeSinceLastCollision > 100) {
+           toy.setMainLedColor(0, 255, 0)
+           heading = ( heading + Math.random() * 100 ) % 360 // randomly change direction
+        }
         // turn the led green
+        toy.setMainLedColor(0, 255, 0)
       } else {
-        if(timeSinceLastCollision < 100) continue
-        // turn the led blue
-        toy.setMainLedColor(0, 0, 255)
+        if(timeSinceLastCollision > 100) toy.setMainLedColor(0, 0, 255)
       }
       heading = heading % 360 // keep heading between 0 and 360
       toy.roll(speed, heading, [])
-      await Utils.wait(waitTime)
     }
   }
 
