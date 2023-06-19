@@ -48,42 +48,34 @@ const start = (toy: SpheroMini) => {
     }
   };
 
-  const onKeyPress = async (key = '', symbol: { name?: string } = {}) => {
-    key = key || symbol.name;
-    cancelPress();
+  const onKeyPress = async (keyData: { name?: string, ctrl?: string } = {}) => {
+    const { name:key,ctrl } = keyData;
     const keyToActionMap = {
       up: async () => {
         heading = 0;
         currentSpeed = speed;
         executing = true;
-        addTimeout();
       },
       left: async () => {
         heading = 270;
         currentSpeed = speed;
         executing = true;
-        addTimeout();
       },
       right: async () => {
         heading = 90;
         currentSpeed = speed;
         executing = true;
-        addTimeout();
       },
       down: async () => {
         heading = 180;
         currentSpeed = speed;
         executing = true;
-        addTimeout();
       },
       q: async () => {
         speed += 10;
       },
       z: async () => {
         speed -= 10;
-      },
-      p: async () => {
-        process.exit();
       },
       s: async () => {
         toy.sleep();
@@ -92,6 +84,8 @@ const start = (toy: SpheroMini) => {
         toy.wake();
       },
       c: async () => {
+        if(ctrl) process.exit(); // imitate ctrl+c
+
         if (calibrating) {
           calibrating = false;
           toy.setBackLedIntensity(0);
@@ -99,11 +93,13 @@ const start = (toy: SpheroMini) => {
           heading = 0;
           return;
         }
+
         toy.setBackLedIntensity(255);
         currentSpeed = 0;
         executing = true;
         heading = 0;
         calibrating = true;
+
       }
     }
     if (keyToActionMap[key]) keyToActionMap[key]();
@@ -117,7 +113,13 @@ const start = (toy: SpheroMini) => {
 
   // set up the keyboard
   process.stdin.setRawMode(true);
-  process.stdin.on('keypress', onKeyPress);
+
+  process.stdin.on('keypress', (_='', rest) => {
+    cancelPress();
+    addTimeout();
+    onKeyPress(rest)
+  });
+
   emitKeypressEvents(process.stdin);
 };
 
