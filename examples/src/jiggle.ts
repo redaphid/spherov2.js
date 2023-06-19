@@ -11,7 +11,7 @@ const cmdPlay = async (toy: SpheroMini) => {
   const loop = async () => {
     timeSinceLastCollision += waitTime
 
-    if (cooldown > 0) { // idle mode
+    if (cooldown > 0) { // dead mode
       cooldown -= waitTime
       toy.setMainLedColor(0, 0, 0)
       return
