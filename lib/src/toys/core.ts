@@ -7,6 +7,7 @@ import {
   DriveFlag,
   ICommandWithRaw,
   SensorCommandIds,
+  SensorData,
 } from '../commands/types';
 import { toPromise } from '../utils';
 
@@ -159,7 +160,7 @@ export class Core {
     };
   }
 
-  public on(eventName: Event, handler: (command: ICommandWithRaw) => void) {
+  public on(eventName: Event, handler: (command: SensorData) => void) {
     this.eventsListeners[eventName] = handler;
   }
 

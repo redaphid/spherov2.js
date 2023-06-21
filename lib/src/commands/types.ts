@@ -174,3 +174,31 @@ export interface ISensorResponse {
     filtered: IThreeAxisSensor;
   };
 }
+
+export interface SensorData {
+  angles: {
+    pitch: number;
+    roll: number;
+    yaw: number;
+  };
+  accelerometer: {
+    filtered: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
+  gyro: {
+    filtered: {
+      x: number;
+      y: number;
+      z: number;
+    };
+  };
+  locator: {
+    position: {
+      x: number;
+      y: number;
+    };
+  };
+}

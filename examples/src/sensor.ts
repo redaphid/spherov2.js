@@ -1,4 +1,4 @@
-import { Event, Utils, ICommandWithRaw, RollableToy } from '../../lib';
+import { Event, Utils, SensorData, RollableToy } from '../../lib';
 import { starter } from './utils/starter';
 
 const main = async (sphero: RollableToy) => {
@@ -12,7 +12,7 @@ const main = async (sphero: RollableToy) => {
   //   console.log('Sensor Read', command);
   // });
 
-  sphero.on(Event.onSensor, (command: ICommandWithRaw) => {
+  sphero.on(Event.onSensor, (command: SensorData) => {
     console.log('onSensor', command);
   });
 
