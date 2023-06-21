@@ -4,7 +4,7 @@
 
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["DOM"],
+    "lib": ["ESNext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": false,
@@ -12,8 +12,7 @@
     "pretty": true,
     "removeComments": false,
     "sourceMap": false,
-    "suppressImplicitAnyIndexErrors": true,
-    "target": "es2017"
+    "target": "ES2022"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "test", "**/*.spec.ts"]
