@@ -1,6 +1,6 @@
 
-import { emitKeypressEvents } from 'readline';
-import { stdin } from 'process';
+import { emitKeypressEvents } from 'readline'
+import { stdin } from 'process'
 
 import { SpheroMini, Event } from '../../lib'
 import { starter } from './utils/starter'
@@ -10,8 +10,8 @@ const cmdPlay = async (toy: SpheroMini) => {
   let flashlight = false
   const collisionTimeout = 100
   let timeSinceLastCollision = 9999
-  let heading = 0;
-  let speed = 0;
+  let heading = 0
+  let speed = 0
   let cooldown = 0
   await toy.configureCollisionDetection()
 
@@ -47,7 +47,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       if (timeSinceLastCollision < collisionTimeout) speedToGo = 1000 // if we've collided recently, go fast
       await toy.roll(speedToGo, heading, [])
     } catch (e) {
-      console.log(e);
+      console.log(e)
       cooldown = 100
     }
     await timeout(waitTime)
@@ -61,7 +61,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     timeSinceLastCollision = 0
     cooldown = 0 // stop idling
     // turn the led red
-    console.log('COLLISION');
+    console.log('COLLISION')
     toy.setMainLedColor(255, 0, 0)
   })
 
@@ -100,7 +100,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     if (keyToActionMap[key]) keyToActionMap[key]()
   })
 
-  loop();
-};
+  loop()
+}
 
 starter(cmdPlay)
