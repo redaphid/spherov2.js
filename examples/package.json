@@ -20,6 +20,7 @@
     "wake-sm": "ts-node src/wake-sleep SM",
     "wake-sb": "ts-node src/wake-sleep SB",
     "wake": "ts-node src/wake-sleep",
+    "cat-toy": "ts-node src/cat-toy",
     "cmd-sm": "ts-node src/cmd SM",
     "cmd-sb": "ts-node src/cmd SB",
     "collision": "ts-node src/collisionDetection",
