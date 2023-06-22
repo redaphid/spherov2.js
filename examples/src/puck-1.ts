@@ -13,10 +13,16 @@ const cmdPlay = async (toy: SpheroMini) => {
   let heading = 0
   let speed = 0
   let cooldown = 0
+  let autoMode = true
   await toy.configureCollisionDetection()
 
   const loop = async () => {
     try {
+      if(!autoMode) {
+        await timeout(100)
+        loop()
+        return
+      }
       timeSinceLastCollision += waitTime
       if (cooldown > 0) {
         cooldown -= waitTime
@@ -81,12 +87,16 @@ const cmdPlay = async (toy: SpheroMini) => {
         // try to stop other behaviors
         cooldown += 5000
       },
-      w: () => speed += 100,
-      s: () => speed -= 100,
+      w: () =>  toy.rollTime(200, heading, 1000, []),
+      s: () =>  toy.roll(200, heading - 180 % 360, []),
       a: () => heading -= 90,
       d: () => heading += 90,
       e: () => intervalTimes(100, ()=> heading += 90),
       q: () => timeSinceLastCollision = 0,
+      space: () => {
+        autoMode = !autoMode,
+        console.log({autoMode})
+      },
       f: () =>  {
         if(flashlight) {
           toy.setBackLedIntensity(0)
