@@ -53,7 +53,7 @@ export const findToys = async (toysType: IToyAdvertisement[]) => {
     false,
   ]); // any service UUID, no duplicates
   scannerDebug('findToys-wait5seconds');
-  await wait(5000);
+  await wait(1000);
   await toPromise(noble, noble.stopScanning);
 
   noble.removeListener('discover', discoverBinded);

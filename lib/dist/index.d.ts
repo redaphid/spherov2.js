@@ -11,5 +11,5 @@ export { RollableToy } from './toys/rollable-toy';
 export { Core } from './toys/core';
 export { Event } from './toys/core';
 export { Stance } from './toys/types';
-export { ICommandWithRaw, SensorData } from './commands/types';
+export { ICommandWithRaw } from './commands/types';
 export { Toys, Scanner, Utils };
