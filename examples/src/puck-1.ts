@@ -13,6 +13,11 @@ const cmdPlay = async (toy: SpheroMini) => {
   let heading = 0
   let speed = 0
   let cooldown = 0
+  let manualMode = false
+  const random = (min: number = 0, max: number = 1) => {
+    if (manualMode) return max
+    return Math.random() * (max - min) + min
+  }
   await toy.configureCollisionDetection()
 
   const loop = async () => {
@@ -31,18 +36,18 @@ const cmdPlay = async (toy: SpheroMini) => {
       } else {
         if (timeSinceLastCollision > collisionTimeout) {
           await toy.setMainLedColor(0, 0, 255) // show blue (idle mode)
-          if (Math.random() < 0.001) {
+          if (random() < 0.001) {
             cooldown = 5000 // 1% of the time, stop for 5 seconds
             await toy.setMainLedColor(0, 0, 0) // light goes out (dead mode)
           }
         }
       }
 
-      if (timeSinceLastCollision > collisionTimeout) heading += Math.random() * 10 // jiggle if we haven't collided recently
-      if (Math.random() < 0.01) heading += 200 // randomly turn around some of the time
-      heading = heading % 360 // keep heading between 0 and 360
+      if (timeSinceLastCollision > collisionTimeout) heading += random(0, 10)// jiggle if we haven't collided recently
+      if (random() < 0.01) heading += 200 // randomly turn around some of the time
+      heading = Math.floor(heading % 360) || 0 // keep heading between 0 and 360
 
-      if (Math.random() < 0.01) speed = 25 // randomly start moving some of the time
+      if (random() < 0.01) speed = 25 // randomly start moving some of the time
       let speedToGo = speed > 0 ? speed * 10 + 100 : 0 // if we weren't moving, don't move
       if (timeSinceLastCollision < collisionTimeout) speedToGo = 1000 // if we've collided recently, go fast
       await toy.roll(speedToGo, heading, [])
@@ -67,14 +72,14 @@ const cmdPlay = async (toy: SpheroMini) => {
 
   // try to "sort of" control the sphere with the keyboard
   const intervalTimes = (time: number, fn: () => void) => {
-    if(time <= 0) return
+    if (time <= 0) return
     fn()
-    setTimeout(() => intervalTimes(time-1, fn), time-1)
+    setTimeout(() => intervalTimes(time - 1, fn), time - 1)
   }
   stdin.setRawMode(true)
   emitKeypressEvents(stdin)
   // suppress keypresses from being printed to the terminal
-  stdin.on('keypress', (ch, {name:key, ctrl}) => {
+  stdin.on('keypress', (ch, { name: key, ctrl }) => {
     const keyToActionMap = {
       c: () => {
         if (ctrl) process.exit()
@@ -88,20 +93,24 @@ const cmdPlay = async (toy: SpheroMini) => {
       l: () => {
         //lock(ish) the heading
         const lockedHeading = heading
-        intervalTimes(100, ()=> heading = lockedHeading)
+        intervalTimes(100, () => heading = lockedHeading)
       },
-      s: ()=>{
+      s: () => {
         // sleep
         console.log('sleep')
         toy.setMainLedColor(0, 0, 0)
         cooldown = 5000
       },
+      space: () => {
+        manualMode = !manualMode
+        console.log(`manual mode: ${manualMode}`)
+      },
       a: () => heading -= 90,
       d: () => heading += 90,
-      e: () => intervalTimes(100, ()=> heading += 90),
+      e: () => intervalTimes(100, () => heading += 90),
       q: () => timeSinceLastCollision = 0,
-      f: () =>  {
-        if(flashlight) {
+      f: () => {
+        if (flashlight) {
           toy.setBackLedIntensity(0)
         } else {
           toy.setBackLedIntensity(255)
