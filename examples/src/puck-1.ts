@@ -11,13 +11,26 @@ const cmdPlay = async (toy: SpheroMini) => {
   const collisionTimeout = 100
   let timeSinceLastCollision = 9999
   let heading = 0
+
+  let isHeadingLocked = false
+  let lockedHeading = 0
+
+  let isSpeedLocked = false
+  let lockedSpeed = 0
+
+  let isRandomLocked = false
+  let lockedRandom = 0;
   let speed = 0
   let cooldown = 0
-  let manualMode = false
+
   const random = (min: number = 0, max: number = 1) => {
-    if (manualMode) return max
-    return Math.random() * (max - min) + min
+    let randomValue = Math.random()
+    if(isRandomLocked) {
+      randomValue = lockedRandom
+    }
+    return randomValue * (max - min) + min
   }
+
   await toy.configureCollisionDetection()
 
   const loop = async () => {
@@ -43,9 +56,9 @@ const cmdPlay = async (toy: SpheroMini) => {
         }
       }
 
-      if (timeSinceLastCollision > collisionTimeout) heading += random(0, 10)// jiggle if we haven't collided recently
+      if (timeSinceLastCollision > collisionTimeout) heading += random(-10, 10)// jiggle if we haven't collided recently
       if (random() < 0.01) heading += 200 // randomly turn around some of the time
-      heading = Math.floor(heading % 360) || 0 // keep heading between 0 and 360
+      heading = Math.abs( Math.floor(heading % 360) || 0) // keep heading between 0 and 360
 
       if (random() < 0.01) speed = 25 // randomly start moving some of the time
       let speedToGo = speed > 0 ? speed * 10 + 100 : 0 // if we weren't moving, don't move
@@ -79,21 +92,26 @@ const cmdPlay = async (toy: SpheroMini) => {
   stdin.setRawMode(true)
   emitKeypressEvents(stdin)
   // suppress keypresses from being printed to the terminal
+  setInterval(() => { if (isHeadingLocked) heading = lockedHeading }, 100)
+  setInterval(() => { if (isSpeedLocked) speed = lockedSpeed }, 100)
+  const turningSpeed = 23
   stdin.on('keypress', (ch, { name: key, ctrl }) => {
     const keyToActionMap = {
       c: () => {
         if (ctrl) process.exit()
         collide()
       },
-      r: () => {
-        // rotate 45 degrees
-        console.log(`rotate 45 degrees: heading: ${heading} to ${heading + 45}`)
-        heading += 45
-      },
       l: () => {
         //lock(ish) the heading
-        const lockedHeading = heading
-        intervalTimes(100, () => heading = lockedHeading)
+        isHeadingLocked = !isHeadingLocked
+        console.log({ isHeadingLocked })
+        lockedHeading = heading
+      },
+      q: () => {
+        // lock(ish) the speed
+        isSpeedLocked = !isSpeedLocked
+        console.log({ isSpeedLocked })
+        lockedSpeed = speed
       },
       s: () => {
         // sleep
@@ -102,13 +120,37 @@ const cmdPlay = async (toy: SpheroMini) => {
         cooldown = 5000
       },
       space: () => {
-        manualMode = !manualMode
-        console.log(`manual mode: ${manualMode}`)
+        isRandomLocked = !isRandomLocked
+        console.log({ isRandomLocked })
       },
-      a: () => heading -= 90,
-      d: () => heading += 90,
-      e: () => intervalTimes(100, () => heading += 90),
-      q: () => timeSinceLastCollision = 0,
+      z: () => {
+        lockedRandom += 0.01
+        console.log({ lockedRandom })
+      },
+      x: () => {
+        lockedRandom -= 0.01
+        console.log({ lockedRandom })
+      },
+      w: () => {
+        console.log(`speed going from ${speed} to ${speed + 10}`)
+        speed += 10
+        lockedSpeed = speed
+      },
+
+      a: () => {
+        console.log(`heading going from ${heading} to ${heading - turningSpeed}`)
+        heading -= turningSpeed
+        lockedHeading = heading
+      },
+      d: () => {
+        console.log(`heading going from ${heading} to ${heading + turningSpeed}`)
+        heading += turningSpeed
+        lockedHeading = heading
+      },
+      r: () => {
+        // turn around
+        heading += 180
+      },
       f: () => {
         if (flashlight) {
           toy.setBackLedIntensity(0)
