@@ -90,7 +90,10 @@ export const find = async <T extends Core>(
     ) || discovered[0];
 
   if (!discoveredItem) {
-    return console.log('Not found');
+    console.log('Not found');
+    await wait(100);
+    console.log('Retrying...');
+    return await find(toyType, name);
   }
 
   const toy: Core = new toyType.class(discoveredItem.peripheral);
@@ -115,6 +118,9 @@ export const findAll = async (toyType: IToyAdvertisement) => {
     }, Promise.resolve([]));
   } else {
     console.log('Not found');
+    await wait(100);
+    console.log('Retrying...');
+    return await findAll(toyType);
   }
 };
 

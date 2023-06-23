@@ -17,11 +17,11 @@ export declare const findToys: (toysType: IToyAdvertisement[]) => Promise<IToyDi
  * Searches toys that match the passed criteria, starts the first found toy and
  * returns it
  */
-export declare const find: <T extends Core>(toyType: IToyAdvertisement, name?: string) => Promise<void | T>;
+export declare const find: <T extends Core>(toyType: IToyAdvertisement, name?: string) => any;
 /**
  * Searches toys that match the passed criteria, starts and returns them
  */
-export declare const findAll: (toyType: IToyAdvertisement) => Promise<any[]>;
+export declare const findAll: (toyType: IToyAdvertisement) => any;
 /**
  * Searches BB9E toys, starts the first one that was found and returns it
  */
