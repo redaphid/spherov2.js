@@ -22,12 +22,10 @@ const start = (toy: SpheroMini) => {
     }, 500);
   };
 
-  const onCollide = (collisionData: any) => {
-
-  };
+  const onCollide = (collisionData: any) => {};
 
   const loop = async (sensorData: any) => {
-    if (!executing && !calibrating) return
+    if (!executing && !calibrating) return;
 
     if (executing) {
       toy.roll(
@@ -39,8 +37,8 @@ const start = (toy: SpheroMini) => {
 
     if (calibrating) {
       heading += 5;
-      heading %= 360
-      return
+      heading %= 360;
+      return;
     }
 
     if (currentSpeed === 0) {
@@ -48,8 +46,8 @@ const start = (toy: SpheroMini) => {
     }
   };
 
-  const onKeyPress = async (keyData: { name?: string, ctrl?: string } = {}) => {
-    const { name:key,ctrl } = keyData;
+  const onKeyPress = async (keyData: { name?: string; ctrl?: string } = {}) => {
+    const { name: key, ctrl } = keyData;
     const keyToActionMap = {
       up: async () => {
         heading = 0;
@@ -84,7 +82,7 @@ const start = (toy: SpheroMini) => {
         toy.wake();
       },
       c: async () => {
-        if(ctrl) process.exit(); // imitate ctrl+c
+        if (ctrl) process.exit(); // imitate ctrl+c
 
         if (calibrating) {
           calibrating = false;
@@ -99,9 +97,8 @@ const start = (toy: SpheroMini) => {
         executing = true;
         heading = 0;
         calibrating = true;
-
-      }
-    }
+      },
+    };
     if (keyToActionMap[key]) keyToActionMap[key]();
   };
   // set up the toy
@@ -114,10 +111,10 @@ const start = (toy: SpheroMini) => {
   // set up the keyboard
   process.stdin.setRawMode(true);
 
-  process.stdin.on('keypress', (_='', rest) => {
+  process.stdin.on('keypress', (_ = '', rest) => {
     cancelPress();
     addTimeout();
-    onKeyPress(rest)
+    onKeyPress(rest);
   });
 
   emitKeypressEvents(process.stdin);

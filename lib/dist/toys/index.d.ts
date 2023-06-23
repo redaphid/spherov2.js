@@ -1,1 +1,1 @@
-export declare const toys: import("./types").IToyAdvertisement[];
+export declare const toys: import('./types').IToyAdvertisement[];

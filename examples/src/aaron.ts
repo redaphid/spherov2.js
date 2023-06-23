@@ -11,11 +11,11 @@ const cmdPlay = (toy: SpheroMini) => {
   let calibrating = false;
   let offset = 0;
   let health = 100;
-  toy.configureCollisionDetection()
-  toy.configureSensorStream()
+  toy.configureCollisionDetection();
+  toy.configureSensorStream();
   toy.on(Event.onSensor, (data) => {
-    console.log({data})
-  })
+    console.log({ data });
+  });
   const cancelPress = () => {
     clearTimeout(pressTimeout);
     pressTimeout = null;

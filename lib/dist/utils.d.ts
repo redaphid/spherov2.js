@@ -1,7 +1,11 @@
 /**
  * Wraps the passed function into a promise
  */
-export declare const toPromise: (binding: any, fn: (...args: any[]) => void, args?: any[]) => Promise<unknown>;
+export declare const toPromise: (
+  binding: any,
+  fn: (...args: any[]) => void,
+  args?: any[]
+) => Promise<unknown>;
 /**
  * Waits the given amount of milliseconds
  * @return promise
