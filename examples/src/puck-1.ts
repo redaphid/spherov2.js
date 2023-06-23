@@ -13,16 +13,10 @@ const cmdPlay = async (toy: SpheroMini) => {
   let heading = 0
   let speed = 0
   let cooldown = 0
-  let autoMode = true
   await toy.configureCollisionDetection()
 
   const loop = async () => {
     try {
-      if(!autoMode) {
-        await timeout(100)
-        loop()
-        return
-      }
       timeSinceLastCollision += waitTime
       if (cooldown > 0) {
         cooldown -= waitTime
@@ -31,7 +25,7 @@ const cmdPlay = async (toy: SpheroMini) => {
         return
       }
       if (speed > 0) { // move mode
-        console.log({ speed })
+        console.log({ speed, heading })
         speed -= waitTime
         if (timeSinceLastCollision > collisionTimeout) toy.setMainLedColor(0, 255, 0) // show green (move mode)
       } else {
@@ -59,8 +53,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     await timeout(waitTime)
     loop()
   }
-
-  toy.on(Event.onCollision, (e) => {
+  const collide = () => {
     if (timeSinceLastCollision < 100) return // ignore collisions that are too close together
     speed = 500 // if we collide, speed up by 500. this will switch us to "move mode"
     heading += 180 // and turn around
@@ -69,7 +62,8 @@ const cmdPlay = async (toy: SpheroMini) => {
     // turn the led red
     console.log('COLLISION')
     toy.setMainLedColor(255, 0, 0)
-  })
+  }
+  toy.on(Event.onCollision, collide)
 
   // try to "sort of" control the sphere with the keyboard
   const intervalTimes = (time: number, fn: () => void) => {
@@ -84,19 +78,28 @@ const cmdPlay = async (toy: SpheroMini) => {
     const keyToActionMap = {
       c: () => {
         if (ctrl) process.exit()
-        // try to stop other behaviors
-        cooldown += 5000
+        collide()
       },
-      w: () =>  toy.rollTime(200, heading, 1000, []),
-      s: () =>  toy.roll(200, heading - 180 % 360, []),
+      r: () => {
+        // rotate 45 degrees
+        console.log(`rotate 45 degrees: heading: ${heading} to ${heading + 45}`)
+        heading += 45
+      },
+      l: () => {
+        //lock(ish) the heading
+        const lockedHeading = heading
+        intervalTimes(100, ()=> heading = lockedHeading)
+      },
+      s: ()=>{
+        // sleep
+        console.log('sleep')
+        toy.setMainLedColor(0, 0, 0)
+        cooldown = 5000
+      },
       a: () => heading -= 90,
       d: () => heading += 90,
       e: () => intervalTimes(100, ()=> heading += 90),
       q: () => timeSinceLastCollision = 0,
-      space: () => {
-        autoMode = !autoMode,
-        console.log({autoMode})
-      },
       f: () =>  {
         if(flashlight) {
           toy.setBackLedIntensity(0)
