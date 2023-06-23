@@ -1,4 +1,4 @@
-import { Scanner, SpheroMini, Event, Utils } from 'spherov2.js';
+import { Scanner, SpheroMini, Event, Utils } from "spherov2.js";
 
 const beep = async (sphero: SpheroMini) => {
   await sphero.setMainLedColor(0xff, 0, 0);
@@ -17,7 +17,7 @@ const main = async () => {
   if (sphero) {
     await sphero.configureCollisionDetection();
     sphero.on(Event.onCollision, () => {
-      console.log('COLLISION');
+      console.log("COLLISION");
       beep(sphero);
     });
 

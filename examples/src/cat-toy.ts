@@ -1,5 +1,5 @@
-import { SpheroMini, Utils, Event, SensorData } from 'spherov2.js';
-import { starter } from './utils/starter';
+import { SpheroMini, Utils, Event, SensorData } from "spherov2.js";
+import { starter } from "./utils/starter";
 
 const MOVE_TIME = 100;
 const WAIT_TIME = 2000;
@@ -37,11 +37,8 @@ export const catToy = async (toy: SpheroMini): Promise<void> => {
       console.log({ initialX, initialY });
       console.log({ x: data.locator.position.x, y: data.locator.position.y });
       //move back to x and y coordinates if it's moved 5 units away
-      if (
-        Math.abs(data.locator.position.x) - Math.abs(initialX) > 20 ||
-        Math.abs(data.locator.position.y) - Math.abs(initialY) > 20
-      ) {
-        console.log('moving back');
+      if (Math.abs(data.locator.position.x) - Math.abs(initialX) > 20 || Math.abs(data.locator.position.y) - Math.abs(initialY) > 20) {
+        console.log("moving back");
 
         toy.rollTime(SPEED, 90, MOVE_TIME, []);
       }

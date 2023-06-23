@@ -1,5 +1,5 @@
-import { SpheroMini, Utils } from '../../lib';
-import { starter } from './utils/starter';
+import { SpheroMini, Utils } from "../../lib";
+import { starter } from "./utils/starter";
 
 const WAIT_TIME = 100;
 export const police = async (toy: SpheroMini): Promise<void> => {

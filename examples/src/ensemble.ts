@@ -1,13 +1,8 @@
-import { Scanner, Core, SpheroMini, Utils } from '../../lib';
+import { Scanner, Core, SpheroMini, Utils } from "../../lib";
 
 const WAIT_TIME = 100;
 
-export const setEachMiniColor = async (
-  minis: SpheroMini[],
-  r: number,
-  g: number,
-  b: number
-) => {
+export const setEachMiniColor = async (minis: SpheroMini[], r: number, g: number, b: number) => {
   for (const mini of minis) {
     await mini.setMainLedColor(r, g, b);
     await Utils.wait(WAIT_TIME);
@@ -40,15 +35,9 @@ const main = async () => {
 
   // sort the minis by their bluetooth advertisment local name (e.g, "SM-????")
   bots.sort((a, b): number => {
-    if (
-      a.peripheral.advertisement.localName <
-      b.peripheral.advertisement.localName
-    ) {
+    if (a.peripheral.advertisement.localName < b.peripheral.advertisement.localName) {
       return -1;
-    } else if (
-      a.peripheral.advertisement.localName >
-      b.peripheral.advertisement.localName
-    ) {
+    } else if (a.peripheral.advertisement.localName > b.peripheral.advertisement.localName) {
       return 1;
     }
     return 0;

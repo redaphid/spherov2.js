@@ -1,6 +1,6 @@
-import { SpheroMini, Event } from '../../lib';
-import { emitKeypressEvents } from 'readline';
-import { starter } from './utils/starter';
+import { SpheroMini, Event } from "../../lib";
+import { emitKeypressEvents } from "readline";
+import { starter } from "./utils/starter";
 
 const start = (toy: SpheroMini) => {
   let pressTimeout: NodeJS.Timer;
@@ -28,11 +28,7 @@ const start = (toy: SpheroMini) => {
     if (!executing && !calibrating) return;
 
     if (executing) {
-      toy.roll(
-        currentSpeed,
-        calibrating ? heading : (heading + offset) % 360,
-        []
-      );
+      toy.roll(currentSpeed, calibrating ? heading : (heading + offset) % 360, []);
     }
 
     if (calibrating) {
@@ -111,7 +107,7 @@ const start = (toy: SpheroMini) => {
   // set up the keyboard
   process.stdin.setRawMode(true);
 
-  process.stdin.on('keypress', (_ = '', rest) => {
+  process.stdin.on("keypress", (_ = "", rest) => {
     cancelPress();
     addTimeout();
     onKeyPress(rest);

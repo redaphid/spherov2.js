@@ -1,6 +1,6 @@
-import { SpheroMini, Utils, Event } from '../../lib';
-import { emitKeypressEvents } from 'readline';
-import { starter } from './utils/starter';
+import { SpheroMini, Utils, Event } from "../../lib";
+import { emitKeypressEvents } from "readline";
+import { starter } from "./utils/starter";
 // SORRY FOR THIS CODE, It is my playground for now
 const cmdPlay = (toy: SpheroMini) => {
   let pressTimeout: NodeJS.Timer;
@@ -35,18 +35,14 @@ const cmdPlay = (toy: SpheroMini) => {
   toy.on(Event.onCollision, () => {
     health -= 10;
     console.log({ health });
-    console.log('COLLISION');
+    console.log("COLLISION");
     setHealthLight(health);
   });
   const loop = async () => {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       if (executing) {
-        toy.roll(
-          currentSpeed,
-          calibrating ? heading : (heading + offset) % 360,
-          []
-        );
+        toy.roll(currentSpeed, calibrating ? heading : (heading + offset) % 360, []);
       }
       if (currentSpeed === 0 && !calibrating) {
         executing = false;
@@ -62,43 +58,43 @@ const cmdPlay = (toy: SpheroMini) => {
     }
   };
 
-  const handle = async (key = '', symbol: { name?: string } = {}) => {
+  const handle = async (key = "", symbol: { name?: string } = {}) => {
     cancelPress();
-    if (symbol.name === 'up') {
+    if (symbol.name === "up") {
       heading = 0;
       currentSpeed = speed;
       executing = true;
       addTimeout();
-    } else if (symbol.name === 'left') {
+    } else if (symbol.name === "left") {
       heading = 270;
       currentSpeed = speed;
       executing = true;
       addTimeout();
-    } else if (symbol.name === 'right') {
+    } else if (symbol.name === "right") {
       heading = 90;
       currentSpeed = speed;
       executing = true;
       addTimeout();
-    } else if (symbol.name === 'down') {
+    } else if (symbol.name === "down") {
       heading = 180;
       currentSpeed = speed;
       executing = true;
       addTimeout();
     }
 
-    if (key === 'q') {
+    if (key === "q") {
       speed += 10;
       // console.log('speed', speed);
-    } else if (key === 'z') {
+    } else if (key === "z") {
       speed -= 10;
       // console.log('speed', speed);
-    } else if (key === 'p') {
+    } else if (key === "p") {
       process.exit();
-    } else if (key === 's') {
+    } else if (key === "s") {
       toy.sleep();
-    } else if (key === 'a') {
+    } else if (key === "a") {
       toy.wake();
-    } else if (key === 'c') {
+    } else if (key === "c") {
       if (calibrating) {
         calibrating = false;
         await toy.setBackLedIntensity(0);
@@ -116,7 +112,7 @@ const cmdPlay = (toy: SpheroMini) => {
 
   emitKeypressEvents(process.stdin);
   process.stdin.setRawMode(true);
-  process.stdin.on('keypress', handle);
+  process.stdin.on("keypress", handle);
 
   loop();
 };

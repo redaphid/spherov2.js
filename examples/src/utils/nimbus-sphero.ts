@@ -1,5 +1,5 @@
-import nimbus, { IControllerState } from './nimbus';
-import { SpheroMini, Utils } from '../../lib';
+import nimbus, { IControllerState } from "./nimbus";
+import { SpheroMini, Utils } from "../../lib";
 
 let state: IControllerState;
 nimbus.onChanged((_state) => {
@@ -33,11 +33,7 @@ export const hid = async (toy: SpheroMini) => {
           stopped = false;
         }
         if (!stopped || calibrating) {
-          toy.roll(
-            calibrating ? 0 : currentSpeed,
-            calibrating ? offset : (heading + offset) % 360,
-            []
-          );
+          toy.roll(calibrating ? 0 : currentSpeed, calibrating ? offset : (heading + offset) % 360, []);
 
           if (currentSpeed === 0) {
             stopped = true;

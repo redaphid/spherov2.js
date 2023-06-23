@@ -1,4 +1,4 @@
-import { HID, devices } from 'node-hid';
+import { HID, devices } from "node-hid";
 
 export interface IDPad {
   xRaw: number;
@@ -36,12 +36,10 @@ enum Buttons {
 const MAX_D_PAD = 127;
 const devs = devices();
 console.log(devs);
-const deviceInfo = devs.find(
-  (d) => d.vendorId === 273 && d.productId === 5152 && d.usage === 1
-);
+const deviceInfo = devs.find((d) => d.vendorId === 273 && d.productId === 5152 && d.usage === 1);
 
 if (!deviceInfo) {
-  console.error('Could not find device in device list');
+  console.error("Could not find device in device list");
   process.exit(1);
 }
 
@@ -71,7 +69,7 @@ let cb = (_state: IControllerState) => {
 };
 
 // looks like buttons have intensity yay!
-device.on('data', (data: Buffer) => {
+device.on("data", (data: Buffer) => {
   state = {
     a: data.readUInt8(Buttons.A),
     b: data.readUInt8(Buttons.B),
@@ -101,8 +99,8 @@ device.on('data', (data: Buffer) => {
   cb(state);
 });
 
-device.on('error', (err) => {
-  console.error('error:', err);
+device.on("error", (err) => {
+  console.error("error:", err);
 });
 
 export default {

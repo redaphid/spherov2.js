@@ -1,4 +1,4 @@
-import { RollableToy, Utils } from '../../lib';
+import { RollableToy, Utils } from "../../lib";
 
 const PATROL_TIME = 2000;
 const WAIT_TIME = 2000;

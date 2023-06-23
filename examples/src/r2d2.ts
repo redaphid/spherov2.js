@@ -1,4 +1,4 @@
-import { Scanner, Stance, Utils } from '../../lib';
+import { Scanner, Stance, Utils } from "../../lib";
 
 const WAIT_TIME = 1000;
 

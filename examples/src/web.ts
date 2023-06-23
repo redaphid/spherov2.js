@@ -1,5 +1,5 @@
-import { Toys, Scanner, Core } from '../../lib';
-import { patrol } from './utils/patrol';
+import { Toys, Scanner, Core } from "../../lib";
+import { patrol } from "./utils/patrol";
 
 const robot = `SB-`;
 export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
@@ -10,6 +10,6 @@ export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
   }
 };
 
-document.querySelector('button').onclick = () => {
+document.querySelector("button").onclick = () => {
   starter(patrol);
 };

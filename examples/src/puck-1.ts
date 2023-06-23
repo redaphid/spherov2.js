@@ -1,26 +1,26 @@
-import { emitKeypressEvents } from 'readline';
-import { stdin } from 'process';
+import { emitKeypressEvents } from "readline";
+import { stdin } from "process";
 
-import { SpheroMini, Event } from '../../lib';
-import { starter } from './utils/starter';
-const timeout = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+import { SpheroMini, Event } from "../../lib";
+import { starter } from "./utils/starter";
+const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const cmdPlay = async (toy: SpheroMini) => {
   let waitTime = 1;
   let flashlight = false;
   const collisionTimeout = 100;
   let timeSinceLastCollision = 9999;
-  let heading = 0;
 
+  let heading = 0;
   let isHeadingLocked = false;
   let lockedHeading = 0;
 
+  let speed = 0;
   let isSpeedLocked = false;
   let lockedSpeed = 0;
 
   let isRandomLocked = false;
   let lockedRandom = 0;
-  let speed = 0;
+
   let cooldown = 0;
 
   const random = (min: number = 0, max: number = 1) => {
@@ -46,8 +46,7 @@ const cmdPlay = async (toy: SpheroMini) => {
         // move mode
         console.log({ speed, heading });
         speed -= waitTime;
-        if (timeSinceLastCollision > collisionTimeout)
-          toy.setMainLedColor(0, 255, 0); // show green (move mode)
+        if (timeSinceLastCollision > collisionTimeout) toy.setMainLedColor(0, 255, 0); // show green (move mode)
       } else {
         if (timeSinceLastCollision > collisionTimeout) {
           await toy.setMainLedColor(0, 0, 255); // show blue (idle mode)
@@ -80,7 +79,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     timeSinceLastCollision = 0;
     cooldown = 0; // stop idling
     // turn the led red
-    console.log('COLLISION');
+    console.log("COLLISION");
     toy.setMainLedColor(255, 0, 0);
   };
   toy.on(Event.onCollision, collide);
@@ -93,15 +92,10 @@ const cmdPlay = async (toy: SpheroMini) => {
   };
   stdin.setRawMode(true);
   emitKeypressEvents(stdin);
-  // suppress keypresses from being printed to the terminal
-  setInterval(() => {
-    if (isHeadingLocked) heading = lockedHeading;
-  }, 100);
-  setInterval(() => {
-    if (isSpeedLocked) speed = lockedSpeed;
-  }, 100);
+  setInterval(() => { if (isHeadingLocked) heading = lockedHeading;}, 100);
+  setInterval(() => { if (isSpeedLocked) speed = lockedSpeed; }, 100);
   const turningSpeed = 23;
-  stdin.on('keypress', (ch, { name: key, ctrl }) => {
+  stdin.on("keypress", (ch, { name: key, ctrl }) => {
     const keyToActionMap = {
       c: () => {
         if (ctrl) process.exit();
@@ -121,7 +115,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       },
       s: () => {
         // sleep
-        console.log('sleep');
+        console.log("sleep");
         toy.setMainLedColor(0, 0, 0);
         cooldown = 5000;
       },
@@ -144,16 +138,12 @@ const cmdPlay = async (toy: SpheroMini) => {
       },
 
       a: () => {
-        console.log(
-          `heading going from ${heading} to ${heading - turningSpeed}`
-        );
+        console.log(`heading going from ${heading} to ${heading - turningSpeed}`);
         heading -= turningSpeed;
         lockedHeading = heading;
       },
       d: () => {
-        console.log(
-          `heading going from ${heading} to ${heading + turningSpeed}`
-        );
+        console.log(`heading going from ${heading} to ${heading + turningSpeed}`);
         heading += turningSpeed;
         lockedHeading = heading;
       },

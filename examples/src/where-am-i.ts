@@ -1,5 +1,5 @@
-import { SpheroMini, Utils, Event } from '../../lib';
-import { starter } from './utils/starter';
+import { SpheroMini, Utils, Event } from "../../lib";
+import { starter } from "./utils/starter";
 const cmdPlay = (toy: SpheroMini) => {
   toy.configureSensorStream();
   toy.on(Event.onSensor, (d) => {
