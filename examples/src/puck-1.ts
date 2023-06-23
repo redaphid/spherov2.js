@@ -124,11 +124,11 @@ const cmdPlay = async (toy: SpheroMini) => {
         console.log({ isRandomLocked })
       },
       z: () => {
-        lockedRandom += 0.01
+        lockedRandom += 0.001
         console.log({ lockedRandom })
       },
       x: () => {
-        lockedRandom -= 0.01
+        lockedRandom -= 0.001
         console.log({ lockedRandom })
       },
       w: () => {
