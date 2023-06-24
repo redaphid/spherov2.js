@@ -8,7 +8,6 @@ const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)
 const cmdPlay = async (toy: SpheroMini) => {
   let waitTime = 1;
   let flashlight = false;
-
   const collisionTimeout = 100;
   let timeSinceLastCollision = 9999;
 
@@ -23,13 +22,13 @@ const cmdPlay = async (toy: SpheroMini) => {
   let isRandomLocked = false;
   let lockedRandom = 0;
 
+  let isCooldownLocked = false;
   let cooldown = 0;
+  let lockedCooldown = 0;
 
   const random = (min: number = 0, max: number = 1) => {
-    let randomValue = Math.random();
-    if (isRandomLocked) {
-      randomValue = lockedRandom;
-    }
+    let randomValue = isRandomLocked ? lockedRandom : Math.random();
+    lockedRandom = randomValue;
     return randomValue * (max - min) + min;
   };
 
@@ -38,51 +37,40 @@ const cmdPlay = async (toy: SpheroMini) => {
   const loop = async () => {
     timeSinceLastCollision += waitTime;
     if (cooldown > 0) return (cooldown -= waitTime);
-    if (speed > 0) {
-      speed -= waitTime;
-      if (timeSinceLastCollision > collisionTimeout) toy.setMainLedColor(0, 255, 0); // show green (move mode)
-    } else {
-      if (timeSinceLastCollision > collisionTimeout) {
-        await toy.setMainLedColor(0, 0, 255); // show blue (idle mode)
-        if (random() < 0.001) {
-          cooldown = 5000; // 1% of the time, stop for 5 seconds
-          await toy.setMainLedColor(0, 0, 0); // light goes out (dead mode)
-        }
+
+    if (random() < 0.001) return cooldown = 1000; // randomly sleep
+    if (random() < 0.005) speed = 25; // randomly speed up
+    if (random() < 0.01) heading += 200; // randomly turn around
+
+    if (timeSinceLastCollision > collisionTimeout) {
+      speed = Math.max(0, speed - 1);
+      heading += random(-10, 10); // jitter around if we're not running away from a collision
+      if (speed > 0) {
+        toy.setMainLedColor(0, 255, 0); // green
+      }
+      else {
+        toy.setMainLedColor(0, 0, 255); // blue
       }
     }
-
-    if (timeSinceLastCollision > collisionTimeout) heading += random(-10, 10); // jiggle if we haven't collided recently
-    if (random() < 0.01) heading += 200; // randomly turn around some of the time
-
-    if (random() < 0.01) speed = 25; // randomly start moving some of the time
-    let speedToGo = speed > 0 ? speed * 10 + 100 : 0; // if we weren't moving, don't move
-    if (timeSinceLastCollision < collisionTimeout) speedToGo = 1000; // if we've collided recently, go fast
-    heading = Math.abs(Math.floor(heading % 360) || 0); // keep heading between 0 and 360
-    await toy.roll(speedToGo, heading, []);
+    heading = Math.floor(heading % 360)
+    if (heading < 0) heading += 360
   };
-
   const collide = () => {
     if (timeSinceLastCollision < 100) return; // ignore collisions that are too close together
-    speed = 500; // if we collide, speed up by 500. this will switch us to "move mode"
-    heading += 180; // and turn around
     timeSinceLastCollision = 0;
+    speed = 100
+    heading += 180; //turn around
     cooldown = 0; // stop idling
     // turn the led red
     toy.setMainLedColor(255, 0, 0);
   };
+
   toy.on(Event.onCollision, collide);
 
-  setInterval(() => {
-    if (isHeadingLocked) heading = lockedHeading;
-  }, 10);
-  setInterval(() => {
-    if (isSpeedLocked) speed = lockedSpeed;
-  }, 10);
-
-  stdin.setRawMode(true);
+  if (stdin.setRawMode) stdin.setRawMode(true);
   emitKeypressEvents(stdin);
-  const turningSpeed = 23;
-  stdin.on("keypress", (ch, { name: key, ctrl }) => {
+  const turningSpeed = 10;
+  stdin.on("keypress", (ch, { name: key, ctrl, shift }) => {
     const keyToActionMap = {
       c: () => {
         if (ctrl) process.exit();
@@ -90,36 +78,60 @@ const cmdPlay = async (toy: SpheroMini) => {
       },
       q: () => {
         toy.setMainLedColor(0, 0, 0);
-        cooldown = 5000;
+        if (ctrl) return isCooldownLocked = !isCooldownLocked;
+        let increment = 100;
+        if (shift) increment *= 5;
+        cooldown += increment;
+        lockedCooldown = cooldown;
       },
+      e: () => {
+        toy.setMainLedColor(0, 0, 0);
+        if (ctrl) return isCooldownLocked = !isCooldownLocked;
+        let increment = 100;
+        if (shift) increment *= 5;
+        cooldown -= increment;
+        lockedCooldown = cooldown;
+      },
+
       z: () => {
         if (ctrl) return (isRandomLocked = !isRandomLocked);
-        lockedRandom += 0.005;
+        let increment = 0.005;
+        if (shift) increment *= 5;
+        lockedRandom += increment;
       },
       x: () => {
         if (ctrl) return (isRandomLocked = !isRandomLocked);
-        lockedRandom -= 0.005;
+        let increment = 0.005;
+        if (shift) increment *= 5;
+        lockedRandom -= increment;
       },
       w: () => {
         if (ctrl) return (isSpeedLocked = !isSpeedLocked);
-        speed += 10;
+        let increment = 10;
+        if (shift) increment *= 5;
+        speed += increment;
         lockedSpeed = speed;
       },
       s: () => {
         if (ctrl) return (isSpeedLocked = !isSpeedLocked);
-        speed -= 10;
+        let increment = 10;
+        if (shift) increment *= 5;
+        speed -= increment;
         lockedSpeed = speed;
       },
-
       a: () => {
         if (ctrl) return (isHeadingLocked = !isHeadingLocked);
-        heading -= turningSpeed;
+        let increment = turningSpeed;
+        if (shift) increment *= 5;
+        heading -= increment;
         lockedHeading = heading;
       },
 
       d: () => {
         if (ctrl) return (isHeadingLocked = !isHeadingLocked);
-        heading += turningSpeed;
+        let increment = turningSpeed;
+        if (shift) increment *= 5;
+        heading += increment;
         lockedHeading = heading;
       },
 
@@ -144,6 +156,11 @@ const cmdPlay = async (toy: SpheroMini) => {
     // clear the console
     try {
       await loop();
+      if (isSpeedLocked) speed = lockedSpeed;
+      if (isHeadingLocked) heading = lockedHeading;
+      if (isCooldownLocked) cooldown = lockedCooldown;
+
+      await toy.roll(speed > 0 ? speed * 10 + 100 : 0, heading, []);
     } catch (e) {
       console.log(e);
       cooldown = 100;
@@ -152,8 +169,8 @@ const cmdPlay = async (toy: SpheroMini) => {
     console.table({
       heading: { value: heading, locked: isHeadingLocked },
       speed: { value: speed, locked: isSpeedLocked },
-      cooldown: { value: cooldown, locked: false },
-      random: { value: lockedRandom, locked: isRandomLocked },
+      cooldown: { value: cooldown, locked: isCooldownLocked },
+      random: { value: parseFloat(lockedRandom.toFixed(4)), locked: isRandomLocked },
       timeSinceLastCollision: { value: timeSinceLastCollision, locked: false },
     });
   }
