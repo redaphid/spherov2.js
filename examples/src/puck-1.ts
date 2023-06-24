@@ -3,10 +3,12 @@ import { stdin } from "process";
 
 import { SpheroMini, Event } from "../../lib";
 import { starter } from "./utils/starter";
+
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const cmdPlay = async (toy: SpheroMini) => {
   let waitTime = 1;
   let flashlight = false;
+
   const collisionTimeout = 100;
   let timeSinceLastCollision = 9999;
 
@@ -66,7 +68,6 @@ const cmdPlay = async (toy: SpheroMini) => {
     timeSinceLastCollision = 0;
     cooldown = 0; // stop idling
     // turn the led red
-    console.log("COLLISION");
     toy.setMainLedColor(255, 0, 0);
   };
   toy.on(Event.onCollision, collide);
@@ -97,7 +98,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       },
       x: () => {
         if (ctrl) return (isRandomLocked = !isRandomLocked);
-        lockedRandom += 0.005;
+        lockedRandom -= 0.005;
       },
       w: () => {
         if (ctrl) return (isSpeedLocked = !isSpeedLocked);
@@ -106,7 +107,6 @@ const cmdPlay = async (toy: SpheroMini) => {
       },
       s: () => {
         if (ctrl) return (isSpeedLocked = !isSpeedLocked);
-        console.log(`speed going from ${speed} to ${speed - 10}`);
         speed -= 10;
         lockedSpeed = speed;
       },
