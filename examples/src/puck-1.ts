@@ -28,24 +28,34 @@ const cmdPlay = async (toy: SpheroMini) => {
 
   let boost = false;
 
-  const random = (min: number = 0, max: number = 1) => {
+  const random = async (min: number = 0, max: number = 1) => {
     let randomValue = isRandomLocked ? lockedRandom : Math.random();
     lockedRandom = randomValue;
+    await timeout(0);
     return randomValue * (max - min) + min;
   };
 
-  await toy.configureCollisionDetection();
+  const intervalTimes = ({fn, times=10,interval=50}:{fn: () => any, times?:number, interval?:number}) => {
+    const id = setInterval(() => {
+      if (!times--) return clearInterval(id);
+      fn();
+    },interval)
+  }
+
+  const jiggle = async () => {
+    intervalTimes({fn:() => heading += Math.random()})
+  }
 
   const loop = async () => {
     timeSinceLastCollision += waitTime;
     if (cooldown > 0) return (cooldown -= waitTime);
 
-    if (random() < 0.001) return cooldown = 1000; // randomly sleep
-    if (random() < 0.005) speed += 128; // randomly speed up
-    if (random() < 0.01) heading += 200; // randomly turn around
+    if (await random() < 0.001) return cooldown = 1000; // randomly sleep
+    if (await random() < 0.005) speed += 128; // randomly speed up
+    if (await random() < 0.01) heading += 200; // randomly turn around
     speed = Math.max(0, speed - 3);
     if (timeSinceLastCollision > collisionTimeout) {
-      heading += random(-10, 10); // jitter around if we're not running away from a collision
+      heading += await random(-10, 10); // jitter around if we're not running away from a collision
       if (speed > 0) {
         toy.setMainLedColor(0, 255, 0); // green
       }
@@ -86,6 +96,9 @@ const cmdPlay = async (toy: SpheroMini) => {
       c: () => {
         if (ctrl) process.exit();
         collide();
+      },
+      j: () => {
+        jiggle()
       },
       q: () => {
         toy.setMainLedColor(0, 0, 0);
