@@ -60,7 +60,7 @@ const cmdPlay = async (toy: SpheroMini) => {
 
 
   const jiggle = async () => {
-    intervalTimes({ fn: () => heading += Math.random() })
+    intervalTimes({ fn: async () => heading += await random(-45,45) })
   }
 
   const loop = async () => {
