@@ -68,7 +68,7 @@ const cmdPlay = async (toy: SpheroMini) => {
   };
 
   const collide = () => {
-    if (timeSinceLastCollision < 100) return; // ignore collisions that are too close together
+    if (timeSinceLastCollision < collisionTimeout) return; // ignore collisions that are too close together
     timeSinceLastCollision = 0;
     speed = 255
     heading += 180; //turn around
