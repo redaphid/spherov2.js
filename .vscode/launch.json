@@ -7,13 +7,16 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "DEBUG",
-      "runtimeExecutable": "ts-node",
+      "name": "Aaron - Debug Puck 1",
+      "runtimeExecutable": "fnm",
       "runtimeArgs": [
+        "exec",
+        "yarn",
+        "game",
+        "puck-1",
         "--inspect-brk",
         "src/index.ts"
       ],
-      "port": 9229
     }
   ]
 }
