@@ -1,28 +1,15 @@
-import debug from 'debug';
-import { Characteristic, Peripheral } from '@abandonware/noble';
-import { factory } from '../commands';
-import { factory as decodeFactory, number } from '../commands/decoder';
-import {
-  DeviceId,
-  DriveFlag,
-  ICommandWithRaw,
-  SensorCommandIds,
-  SensorData,
-} from '../commands/types';
-import { toPromise } from '../utils';
+import debug from "debug";
+import { Characteristic, Peripheral } from "@abandonware/noble";
+import { factory } from "../commands";
+import { factory as decodeFactory, number } from "../commands/decoder";
+import { DeviceId, DriveFlag, ICommandWithRaw, SensorCommandIds, SensorData } from "../commands/types";
+import { toPromise } from "../utils";
 
-import { Queue } from './queue';
-import {
-  CharacteristicUUID,
-  Stance,
-  SensorMaskValues,
-  SensorControlDefaults,
-  APIVersion,
-  ISensorMaskRaw,
-} from './types';
-import { sensorValuesToRaw, flatSensorMask, parseSensorEvent } from './utils';
+import { Queue } from "./queue";
+import { CharacteristicUUID, Stance, SensorMaskValues, SensorControlDefaults, APIVersion, ISensorMaskRaw } from "./types";
+import { sensorValuesToRaw, flatSensorMask, parseSensorEvent } from "./utils";
 
-const coreDebug = debug('spherov2-core');
+const coreDebug = debug("spherov2-core");
 
 // WORKAROUND for https://github.com/Microsoft/TypeScript/issues/5711
 export interface IReExport {
@@ -40,8 +27,8 @@ export interface IQueuePayload {
 }
 
 export enum Event {
-  onCollision = 'onCollision',
-  onSensor = 'onSensor',
+  onCollision = "onCollision",
+  onSensor = "onSensor",
 }
 
 type EventMap = { [key in Event]?: (args: any) => void };
@@ -78,9 +65,7 @@ export class Core {
    * Determines and returns the current battery charging state
    */
   public async batteryVoltage() {
-    const response = await this.queueCommand(
-      this.commands.power.batteryVoltage()
-    );
+    const response = await this.queueCommand(this.commands.power.batteryVoltage());
     return number(response.command.payload, 1) / 100;
   }
 
@@ -91,8 +76,7 @@ export class Core {
    */
   public async batteryLevel(): Promise<number> {
     const voltage = await this.batteryVoltage();
-    const percent =
-      (voltage - this.minVoltage) / (this.maxVoltage - this.minVoltage);
+    const percent = (voltage - this.minVoltage) / (this.maxVoltage - this.minVoltage);
     return percent > 1 ? 1 : percent;
   }
 
@@ -114,46 +98,38 @@ export class Core {
    * Starts the toy
    */
   public async start() {
-    coreDebug('start-start');
+    coreDebug("start-start");
     // start
     await this.init();
 
-    coreDebug('start-usetheforce...band');
-    await this.write(this.antiDoSCharacteristic, 'usetheforce...band');
+    coreDebug("start-usetheforce...band");
+    await this.write(this.antiDoSCharacteristic, "usetheforce...band");
 
-    coreDebug('start-dfuControlCharacteristic-subscribe');
-    await toPromise(
-      this.dfuControlCharacteristic,
-      this.dfuControlCharacteristic.subscribe
-    );
+    coreDebug("start-dfuControlCharacteristic-subscribe");
+    await toPromise(this.dfuControlCharacteristic, this.dfuControlCharacteristic.subscribe);
 
-    coreDebug('start-apiV2Characteristic-subscribe');
-    await toPromise(
-      this.apiV2Characteristic,
-      this.apiV2Characteristic.subscribe
-    );
+    coreDebug("start-apiV2Characteristic-subscribe");
+    await toPromise(this.apiV2Characteristic, this.apiV2Characteristic.subscribe);
 
-    coreDebug('start-initPromise');
+    coreDebug("start-initPromise");
     await this.initPromise;
     this.initPromiseResolve = null;
     this.started = true;
 
     try {
-      coreDebug('start-wake');
+      coreDebug("start-wake");
       await this.wake();
     } catch (e) {
-      console.error('error', e);
+      console.error("error", e);
     }
-    coreDebug('start-end');
+    coreDebug("start-end");
   }
 
   /**
    * Determines and returns the system app version of the toy
    */
   public async appVersion() {
-    const response = await this.queueCommand(
-      this.commands.systemInfo.appVersion()
-    );
+    const response = await this.queueCommand(this.commands.systemInfo.appVersion());
     return {
       major: number(response.command.payload, 1),
       minor: number(response.command.payload, 3),
@@ -171,27 +147,13 @@ export class Core {
   }
 
   public async configureSensorStream(): Promise<void> {
-    const sensorMask = [
-      SensorMaskValues.accelerometer,
-      SensorMaskValues.orientation,
-      SensorMaskValues.locator,
-      SensorMaskValues.gyro,
-    ];
+    const sensorMask = [SensorMaskValues.accelerometer, SensorMaskValues.orientation, SensorMaskValues.locator, SensorMaskValues.gyro];
     // save it so on response we can parse it
     this.sensorMask = sensorValuesToRaw(sensorMask, this.apiVersion);
 
-    await this.queueCommand(
-      this.commands.sensor.sensorMask(
-        flatSensorMask(this.sensorMask.v2),
-        SensorControlDefaults.interval
-      )
-    );
+    await this.queueCommand(this.commands.sensor.sensorMask(flatSensorMask(this.sensorMask.v2), SensorControlDefaults.interval));
     if (this.sensorMask.v21.length > 0) {
-      await this.queueCommand(
-        this.commands.sensor.sensorMaskExtended(
-          flatSensorMask(this.sensorMask.v21)
-        )
-      );
+      await this.queueCommand(this.commands.sensor.sensorMaskExtended(flatSensorMask(this.sensorMask.v21)));
     }
   }
 
@@ -199,24 +161,8 @@ export class Core {
     return this.queueCommand(this.commands.sensor.enableCollisionAsync());
   }
 
-  public configureCollisionDetection(
-    xThreshold = 100,
-    yThreshold = 100,
-    xSpeed = 100,
-    ySpeed = 100,
-    deadTime = 10,
-    method = 0x01
-  ): Promise<IQueuePayload> {
-    return this.queueCommand(
-      this.commands.sensor.configureCollision(
-        xThreshold,
-        yThreshold,
-        xSpeed,
-        ySpeed,
-        deadTime,
-        method
-      )
-    );
+  public configureCollisionDetection(xThreshold = 100, yThreshold = 100, xSpeed = 100, ySpeed = 100, deadTime = 10, method = 0x01): Promise<IQueuePayload> {
+    return this.queueCommand(this.commands.sensor.configureCollision(xThreshold, yThreshold, xSpeed, ySpeed, deadTime, method));
   }
 
   protected queueCommand(command: ICommandWithRaw): Promise<IQueuePayload> {
@@ -227,7 +173,7 @@ export class Core {
   }
 
   private async init() {
-    coreDebug('init-start');
+    coreDebug("init-start");
     const p = this.peripheral;
 
     this.initPromise = new Promise((resolve) => {
@@ -240,15 +186,13 @@ export class Core {
     });
     this.eventsListeners = {};
     this.commands = factory();
-    this.decoder = decodeFactory((error, packet) =>
-      this.onPacketRead(error, packet)
-    );
+    this.decoder = decodeFactory((error, packet) => this.onPacketRead(error, packet));
     this.started = false;
 
-    coreDebug('init-connect');
+    coreDebug("init-connect");
     await toPromise(p, p.connect);
 
-    coreDebug('init-discoverAllServicesAndCharacteristics');
+    coreDebug("init-discoverAllServicesAndCharacteristics");
     await toPromise(p, p.discoverAllServicesAndCharacteristics);
     // WEB
     // noble.onServicesDiscover(
@@ -261,7 +205,7 @@ export class Core {
     this.bindServices();
     this.bindListeners();
 
-    coreDebug('init-done');
+    coreDebug("init-done");
   }
 
   private async onExecute(item: IQueuePayload) {
@@ -281,18 +225,18 @@ export class Core {
   }
 
   private bindServices() {
-    coreDebug('bindServices');
+    coreDebug("bindServices");
     this.peripheral.services.forEach((s) =>
       s.characteristics.forEach((c) => {
         if (c.uuid === CharacteristicUUID.antiDoSCharacteristic) {
           this.antiDoSCharacteristic = c;
-          coreDebug('bindServices antiDoSCharacteristic found ', c);
+          coreDebug("bindServices antiDoSCharacteristic found ", c);
         } else if (c.uuid === CharacteristicUUID.apiV2Characteristic) {
           this.apiV2Characteristic = c;
-          coreDebug('bindServices apiV2Characteristic found', c);
+          coreDebug("bindServices apiV2Characteristic found", c);
         } else if (c.uuid === CharacteristicUUID.dfuControlCharacteristic) {
           this.dfuControlCharacteristic = c;
-          coreDebug('bindServices dfuControlCharacteristic found', c);
+          coreDebug("bindServices dfuControlCharacteristic found", c);
         } else if (c.uuid === CharacteristicUUID.subsCharacteristic) {
           this.subsCharacteristic = c;
         }
@@ -301,49 +245,31 @@ export class Core {
   }
 
   private bindListeners() {
-    coreDebug('bindListeners');
-    this.apiV2Characteristic.on(
-      'read',
-      (data: Buffer, isNotification: boolean) =>
-        this.onApiRead(data, isNotification)
-    );
-    this.apiV2Characteristic.on(
-      'notify',
-      (data: Buffer, isNotification: boolean) =>
-        this.onApiNotify(data, isNotification)
-    );
-    this.dfuControlCharacteristic.on(
-      'notify',
-      (data: Buffer, isNotification: boolean) =>
-        this.onDFUControlNotify(data, isNotification)
-    );
+    coreDebug("bindListeners");
+    this.apiV2Characteristic.on("read", (data: Buffer, isNotification: boolean) => this.onApiRead(data, isNotification));
+    this.apiV2Characteristic.on("notify", (data: Buffer, isNotification: boolean) => this.onApiNotify(data, isNotification));
+    this.dfuControlCharacteristic.on("notify", (data: Buffer, isNotification: boolean) => this.onDFUControlNotify(data, isNotification));
   }
 
   private onPacketRead(error: string, command: ICommandWithRaw) {
     if (error) {
-      console.error('There was a parse error', error);
+      console.error("There was a parse error", error);
     } else if (command.sequenceNumber === 255) {
-      coreDebug('onEvent', error, command);
+      coreDebug("onEvent", error, command);
       this.eventHandler(command);
     } else {
-      coreDebug('onPacketRead', error, command);
+      coreDebug("onPacketRead", error, command);
       this.queue.onCommandProcessed({ command });
     }
   }
 
   private eventHandler(command: ICommandWithRaw) {
-    if (
-      command.deviceId === DeviceId.sensor &&
-      command.commandId === SensorCommandIds.collisionDetectedAsync
-    ) {
+    if (command.deviceId === DeviceId.sensor && command.commandId === SensorCommandIds.collisionDetectedAsync) {
       this.handleCollision(command);
-    } else if (
-      command.deviceId === DeviceId.sensor &&
-      command.commandId === SensorCommandIds.sensorResponse
-    ) {
+    } else if (command.deviceId === DeviceId.sensor && command.commandId === SensorCommandIds.sensorResponse) {
       this.handleSensorUpdate(command);
     } else {
-      console.log('UNKOWN EVENT', command.raw);
+      console.log("UNKOWN EVENT", command.raw);
     }
   }
 
@@ -353,7 +279,7 @@ export class Core {
     if (handler) {
       handler(command);
     } else {
-      console.log('No handler for collision but collision was detected');
+      console.log("No handler for collision but collision was detected");
     }
   }
 
@@ -363,7 +289,7 @@ export class Core {
       const parsedEvent = parseSensorEvent(command.payload, this.sensorMask);
       handler(parsedEvent);
     } else {
-      console.log('No handler for collision but collision was detected');
+      console.log("No handler for collision but collision was detected");
     }
   }
 
@@ -373,7 +299,7 @@ export class Core {
 
   private onApiNotify(data: any, isNotification: any) {
     if (this.initPromiseResolve) {
-      coreDebug('onApiNotify', data);
+      coreDebug("onApiNotify", data);
       this.initPromiseResolve();
       this.initPromiseResolve = null;
       this.initPromise = null;
@@ -382,18 +308,18 @@ export class Core {
   }
 
   private onDFUControlNotify(data: any, isNotification: any) {
-    coreDebug('onDFUControlNotify', data);
+    coreDebug("onDFUControlNotify", data);
     return this.write(this.dfuControlCharacteristic, new Uint8Array([0x30]));
   }
 
   private write(c: Characteristic, data: Uint8Array | string) {
     let buff;
-    if (typeof data === 'string') {
+    if (typeof data === "string") {
       buff = Buffer.from(data);
     } else {
       buff = Buffer.from(data);
     }
-    coreDebug('write', data);
+    coreDebug("write", data);
     return toPromise(c, c.write, [buff, true]);
   }
 }

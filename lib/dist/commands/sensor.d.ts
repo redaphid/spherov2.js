@@ -1,4 +1,4 @@
-import { CommandGenerator, ICommandWithRaw } from './types';
+import { CommandGenerator, ICommandWithRaw } from "./types";
 declare const _default: (
   generator: CommandGenerator
 ) => {
@@ -16,18 +16,8 @@ declare const _default: (
    * @param  {number=0x01} method Detection method type to use. Currently the only method
    * supported is 01h. Use 00h to completely disable this service.
    */
-  configureCollision: (
-    xThreshold: number,
-    yThreshold: number,
-    xSpeed: number,
-    ySpeed: number,
-    deadTime: number,
-    method?: number
-  ) => ICommandWithRaw;
-  sensorMask: (
-    sensorRawValue: number,
-    streamingRate: number
-  ) => ICommandWithRaw;
+  configureCollision: (xThreshold: number, yThreshold: number, xSpeed: number, ySpeed: number, deadTime: number, method?: number) => ICommandWithRaw;
+  sensorMask: (sensorRawValue: number, streamingRate: number) => ICommandWithRaw;
   sensorMaskExtended: (mask: number) => ICommandWithRaw;
 };
 export default _default;

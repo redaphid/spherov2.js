@@ -22,14 +22,12 @@ export class Queue<P> {
   }
 
   public onCommandProcessed(payloadReceived: P): void {
-    const lastCommand: ICommandQueueItem<P> = this.waitingForResponseQueue.find(
-      (command) => this.queueListener.match(command.payload, payloadReceived)
-    );
+    const lastCommand: ICommandQueueItem<P> = this.waitingForResponseQueue.find((command) => this.queueListener.match(command.payload, payloadReceived));
     if (lastCommand) {
       this.removeFromWaiting(lastCommand);
       lastCommand.success(payloadReceived);
     } else {
-      console.log('PACKET RECEIVED BUT NOT EXECUTING', payloadReceived);
+      console.log("PACKET RECEIVED BUT NOT EXECUTING", payloadReceived);
     }
   }
 
@@ -63,7 +61,7 @@ export class Queue<P> {
   }
 
   private onCommandTimedout(command: ICommandQueueItem<P>) {
-    this.handleQueueError('Command Timedout', command);
+    this.handleQueueError("Command Timedout", command);
     this.removeFromWaiting(command);
   }
 

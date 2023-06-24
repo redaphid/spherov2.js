@@ -1,37 +1,31 @@
-import debug from 'debug';
-import { Peripheral } from '@abandonware/noble';
-import noble from './noble-wrapper';
-import { BB9E } from './toys/bb9e';
-import { Core } from './toys/core';
-import { LightningMcQueen } from './toys/lightning-mcqueen';
-import { R2D2 } from './toys/r2d2';
-import { R2Q5 } from './toys/r2q5';
-import { SpheroMini } from './toys/sphero-mini';
-import { IToyAdvertisement, ServicesUUID } from './toys/types';
-import { wait } from './utils';
-import { toPromise } from './utils';
+import debug from "debug";
+import { Peripheral } from "@abandonware/noble";
+import noble from "./noble-wrapper";
+import { BB9E } from "./toys/bb9e";
+import { Core } from "./toys/core";
+import { LightningMcQueen } from "./toys/lightning-mcqueen";
+import { R2D2 } from "./toys/r2d2";
+import { R2Q5 } from "./toys/r2q5";
+import { SpheroMini } from "./toys/sphero-mini";
+import { IToyAdvertisement, ServicesUUID } from "./toys/types";
+import { wait } from "./utils";
+import { toPromise } from "./utils";
 
-const scannerDebug = debug('spherov2-scanner');
+const scannerDebug = debug("spherov2-scanner");
 
 export interface IToyDiscovered extends IToyAdvertisement {
   peripheral: Peripheral;
 }
 
-const discover = async (
-  validToys: IToyAdvertisement[],
-  toys: IToyDiscovered[],
-  p: Peripheral
-) => {
-  scannerDebug('Dicovered', p.address);
+const discover = async (validToys: IToyAdvertisement[], toys: IToyDiscovered[], p: Peripheral) => {
+  scannerDebug("Dicovered", p.address);
   const { advertisement, uuid } = p;
-  const { localName = '' } = advertisement;
+  const { localName = "" } = advertisement;
   validToys.forEach(async (toyAdvertisement) => {
     if (localName.indexOf(toyAdvertisement.prefix) === 0) {
       toys.push({ ...toyAdvertisement, peripheral: p });
 
-      console.log(
-        `name: ${toyAdvertisement.name}, uuid: ${uuid}, mac-address: ${p.address}`
-      );
+      console.log(`name: ${toyAdvertisement.name}, uuid: ${uuid}, mac-address: ${p.address}`);
     }
   });
 };
@@ -40,59 +34,50 @@ const discover = async (
  * Searches (but does not start) toys that matcht the passed criteria
  */
 export const findToys = async (toysType: IToyAdvertisement[]) => {
-  scannerDebug('findToys');
+  scannerDebug("findToys");
   const toys: IToyDiscovered[] = [];
 
-  console.log('Scanning devices...');
+  console.log("Scanning devices...");
   const discoverBinded = discover.bind(this, toysType, toys);
 
-  noble.on('discover', discoverBinded);
-  scannerDebug('findToys-nobleStartScanning');
-  await toPromise(noble, noble.startScanning, [
-    Object.keys(ServicesUUID).map((key) => ServicesUUID[key]),
-    false,
-  ]); // any service UUID, no duplicates
-  scannerDebug('findToys-wait5seconds');
+  noble.on("discover", discoverBinded);
+  scannerDebug("findToys-nobleStartScanning");
+  await toPromise(noble, noble.startScanning, [Object.keys(ServicesUUID).map((key) => ServicesUUID[key]), false]); // any service UUID, no duplicates
+  scannerDebug("findToys-wait5seconds");
   await wait(1000);
   await toPromise(noble, noble.stopScanning);
 
-  noble.removeListener('discover', discoverBinded);
+  noble.removeListener("discover", discoverBinded);
 
-  console.log('Done scanning devices.');
+  console.log("Done scanning devices.");
   return toys;
 };
 
 const startToy = async (toy: Core) => {
-  console.log('Starting...');
+  console.log("Starting...");
   await toy.start();
 
-  console.log('Started');
+  console.log("Started");
   const version = await toy.appVersion();
 
-  console.log('Version', version);
+  console.log("Version", version);
   const battery = await toy.batteryLevel();
 
-  console.log('Battery', battery);
+  console.log("Battery", battery);
 };
 
 /**
  * Searches toys that match the passed criteria, starts the first found toy and
  * returns it
  */
-export const find = async <T extends Core>(
-  toyType: IToyAdvertisement,
-  name?: string
-) => {
+export const find = async <T extends Core>(toyType: IToyAdvertisement, name?: string) => {
   const discovered = await findToys([toyType]);
-  const discoveredItem: IToyDiscovered =
-    discovered.find(
-      (item) => item.peripheral.advertisement.localName === name
-    ) || discovered[0];
+  const discoveredItem: IToyDiscovered = discovered.find((item) => item.peripheral.advertisement.localName === name) || discovered[0];
 
   if (!discoveredItem) {
-    console.log('Not found');
+    console.log("Not found");
     await wait(100);
-    console.log('Retrying...');
+    console.log("Retrying...");
     return await find(toyType, name);
   }
 
@@ -117,9 +102,9 @@ export const findAll = async (toyType: IToyAdvertisement) => {
       return [...toyArray, toy];
     }, Promise.resolve([]));
   } else {
-    console.log('Not found');
+    console.log("Not found");
     await wait(100);
-    console.log('Retrying...');
+    console.log("Retrying...");
     return await findAll(toyType);
   }
 };

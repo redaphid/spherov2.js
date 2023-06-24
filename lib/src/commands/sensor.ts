@@ -1,9 +1,4 @@
-import {
-  CommandGenerator,
-  DeviceId,
-  SensorCommandIds,
-  ICommandWithRaw,
-} from './types';
+import { CommandGenerator, DeviceId, SensorCommandIds, ICommandWithRaw } from "./types";
 
 export default (generator: CommandGenerator) => {
   const encode = generator(DeviceId.sensor);
@@ -26,24 +21,14 @@ export default (generator: CommandGenerator) => {
      * @param  {number=0x01} method Detection method type to use. Currently the only method
      * supported is 01h. Use 00h to completely disable this service.
      */
-    configureCollision: (
-      xThreshold: number,
-      yThreshold: number,
-      xSpeed: number,
-      ySpeed: number,
-      deadTime: number,
-      method = 0x01
-    ) =>
+    configureCollision: (xThreshold: number, yThreshold: number, xSpeed: number, ySpeed: number, deadTime: number, method = 0x01) =>
       encode({
         commandId: SensorCommandIds.configureCollision,
         targetId: 0x12,
         payload: [method, xThreshold, xSpeed, yThreshold, ySpeed, deadTime],
       }),
 
-    sensorMask: (
-      sensorRawValue: number,
-      streamingRate: number
-    ): ICommandWithRaw => {
+    sensorMask: (sensorRawValue: number, streamingRate: number): ICommandWithRaw => {
       const bytes = [
         (streamingRate >> 8) & 0xff,
         streamingRate & 0xff,
@@ -61,12 +46,7 @@ export default (generator: CommandGenerator) => {
     },
 
     sensorMaskExtended: (mask: number): ICommandWithRaw => {
-      const bytes = [
-        (mask >> 24) & 0xff,
-        (mask >> 16) & 0xff,
-        (mask >> 8) & 0xff,
-        mask & 0xff,
-      ];
+      const bytes = [(mask >> 24) & 0xff, (mask >> 16) & 0xff, (mask >> 8) & 0xff, mask & 0xff];
       return encode({
         commandId: SensorCommandIds.sensorMaskExtended,
         targetId: 0x12,

@@ -1,28 +1,23 @@
-import { Peripheral } from '@abandonware/noble';
-import { BB9E } from './toys/bb9e';
-import { Core } from './toys/core';
-import { LightningMcQueen } from './toys/lightning-mcqueen';
-import { R2D2 } from './toys/r2d2';
-import { R2Q5 } from './toys/r2q5';
-import { SpheroMini } from './toys/sphero-mini';
-import { IToyAdvertisement } from './toys/types';
+import { Peripheral } from "@abandonware/noble";
+import { BB9E } from "./toys/bb9e";
+import { Core } from "./toys/core";
+import { LightningMcQueen } from "./toys/lightning-mcqueen";
+import { R2D2 } from "./toys/r2d2";
+import { R2Q5 } from "./toys/r2q5";
+import { SpheroMini } from "./toys/sphero-mini";
+import { IToyAdvertisement } from "./toys/types";
 export interface IToyDiscovered extends IToyAdvertisement {
   peripheral: Peripheral;
 }
 /**
  * Searches (but does not start) toys that matcht the passed criteria
  */
-export declare const findToys: (
-  toysType: IToyAdvertisement[]
-) => Promise<IToyDiscovered[]>;
+export declare const findToys: (toysType: IToyAdvertisement[]) => Promise<IToyDiscovered[]>;
 /**
  * Searches toys that match the passed criteria, starts the first found toy and
  * returns it
  */
-export declare const find: <T extends Core>(
-  toyType: IToyAdvertisement,
-  name?: string
-) => any;
+export declare const find: <T extends Core>(toyType: IToyAdvertisement, name?: string) => any;
 /**
  * Searches toys that match the passed criteria, starts and returns them
  */
@@ -46,9 +41,7 @@ export declare const findSpheroMini: () => Promise<SpheroMini>;
 /**
  * Searches a Sphero Mini toy with the passed name, starts and returns it
  */
-export declare const findSpheroMiniByName: (
-  name: string
-) => Promise<SpheroMini>;
+export declare const findSpheroMiniByName: (name: string) => Promise<SpheroMini>;
 /**
  * Searches for all available Sphero Mini toys, starts and returns them
  */

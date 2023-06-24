@@ -1,11 +1,5 @@
-import {
-  AnimatronicsCommandIds,
-  CommandGenerator,
-  DeviceId,
-  UserIOCommandIds,
-  ICommandWithRaw,
-} from './types';
-import { Stance } from '../toys/types';
+import { AnimatronicsCommandIds, CommandGenerator, DeviceId, UserIOCommandIds, ICommandWithRaw } from "./types";
+import { Stance } from "../toys/types";
 
 export default (generator: CommandGenerator) => {
   const encode = generator(DeviceId.userIO);

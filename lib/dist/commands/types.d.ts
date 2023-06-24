@@ -123,9 +123,7 @@ export interface ICommand extends ICommandPartial {
 export interface ICommandWithRaw extends ICommand {
   raw: Uint8Array;
 }
-export declare type CommandGenerator = (
-  deviceId: number
-) => (part: ICommandPartial) => ICommandWithRaw;
+export declare type CommandGenerator = (deviceId: number) => (part: ICommandPartial) => ICommandWithRaw;
 export interface IThreeAxisSensor {
   x: number;
   y: number;

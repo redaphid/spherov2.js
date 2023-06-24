@@ -1,4 +1,4 @@
-import { APIConstants, ICommandWithRaw, Flags } from './types';
+import { APIConstants, ICommandWithRaw, Flags } from "./types";
 
 const MINIMUN_PACKET_LENGTH = 6;
 
@@ -57,9 +57,7 @@ const classifyPacket = (packet: Uint8Array): ICommandWithRaw => {
   };
 };
 
-export function factory(
-  callback: (err: string, response?: ICommandWithRaw) => void
-) {
+export function factory(callback: (err: string, response?: ICommandWithRaw) => void) {
   let msg: number[] = [];
   let checksum = 0;
   let isEscaping = false;
@@ -79,16 +77,16 @@ export function factory(
         case APIConstants.startOfPacket:
           if (msg.length !== 0) {
             init();
-            return callback('Invalid first byte');
+            return callback("Invalid first byte");
           }
           return msg.push(byte);
         case APIConstants.endOfPacket:
           if (msg.length === 0 || msg.length < MINIMUN_PACKET_LENGTH) {
-            return error('Invalid last byte ' + msg.length);
+            return error("Invalid last byte " + msg.length);
           }
 
           if (checksum !== 0xff) {
-            return error('Invalid checksum');
+            return error("Invalid checksum");
           }
 
           msg.push(byte);
@@ -97,7 +95,7 @@ export function factory(
 
         case APIConstants.escape:
           if (isEscaping) {
-            return error('Invalid escape char position');
+            return error("Invalid escape char position");
           }
           isEscaping = true;
           return;
@@ -111,7 +109,7 @@ export function factory(
       }
 
       if (isEscaping) {
-        return error('Invalid no escape char end found');
+        return error("Invalid no escape char end found");
       }
 
       msg.push(byte);

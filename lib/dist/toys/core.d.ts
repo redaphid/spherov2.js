@@ -1,6 +1,6 @@
-import { Characteristic, Peripheral } from '@abandonware/noble';
-import { DriveFlag, ICommandWithRaw, SensorData } from '../commands/types';
-import { Stance, APIVersion } from './types';
+import { Characteristic, Peripheral } from "@abandonware/noble";
+import { DriveFlag, ICommandWithRaw, SensorData } from "../commands/types";
+import { Stance, APIVersion } from "./types";
 export interface IReExport {
   a: Stance;
   b: DriveFlag;
@@ -10,11 +10,7 @@ export declare const commandsType: {
     echo: () => ICommandWithRaw;
   };
   driving: {
-    drive: (
-      speed: number,
-      heading: number,
-      flags: DriveFlag[]
-    ) => ICommandWithRaw;
+    drive: (speed: number, heading: number, flags: DriveFlag[]) => ICommandWithRaw;
     driveAsRc: (heading: number, speed: number) => ICommandWithRaw;
   };
   power: {
@@ -46,10 +42,10 @@ export declare const commandsType: {
     setStance: (stance: Stance) => ICommandWithRaw;
     playAnimation: (animation: number) => ICommandWithRaw;
     setR2D2LEDColor: (r: number, g: number, b: number) => ICommandWithRaw;
-    setR2D2FrontLEDColor: (r: number, g: number, b: number) => ICommandWithRaw
+    setR2D2FrontLEDColor: (r: number, g: number, b: number) => ICommandWithRaw;
     /**
      * Wakes up the toy from sleep mode
-     */;
+     */
     setR2D2BackLEDcolor: (r: number, g: number, b: number) => ICommandWithRaw;
     setR2D2HoloProjectorIntensity: (i: number) => ICommandWithRaw;
     setR2D2LogicDisplaysIntensity: (i: number) => ICommandWithRaw;
@@ -60,18 +56,8 @@ export declare const commandsType: {
   };
   sensor: {
     enableCollisionAsync: () => ICommandWithRaw;
-    configureCollision: (
-      xThreshold: number,
-      yThreshold: number,
-      xSpeed: number,
-      ySpeed: number,
-      deadTime: number,
-      method?: number
-    ) => ICommandWithRaw;
-    sensorMask: (
-      sensorRawValue: number,
-      streamingRate: number
-    ) => ICommandWithRaw;
+    configureCollision: (xThreshold: number, yThreshold: number, xSpeed: number, ySpeed: number, deadTime: number, method?: number) => ICommandWithRaw;
+    sensorMask: (sensorRawValue: number, streamingRate: number) => ICommandWithRaw;
     sensorMaskExtended: (mask: number) => ICommandWithRaw;
   };
 };
@@ -83,8 +69,8 @@ export interface IQueuePayload {
   characteristic?: Characteristic;
 }
 export declare enum Event {
-  onCollision = 'onCollision',
-  onSensor = 'onSensor',
+  onCollision = "onCollision",
+  onSensor = "onSensor",
 }
 export declare class Core {
   protected maxVoltage: number;
@@ -137,14 +123,7 @@ export declare class Core {
   destroy(): Promise<void>;
   configureSensorStream(): Promise<void>;
   enableCollisionDetection(): Promise<IQueuePayload>;
-  configureCollisionDetection(
-    xThreshold?: number,
-    yThreshold?: number,
-    xSpeed?: number,
-    ySpeed?: number,
-    deadTime?: number,
-    method?: number
-  ): Promise<IQueuePayload>;
+  configureCollisionDetection(xThreshold?: number, yThreshold?: number, xSpeed?: number, ySpeed?: number, deadTime?: number, method?: number): Promise<IQueuePayload>;
   protected queueCommand(command: ICommandWithRaw): Promise<IQueuePayload>;
   private init;
   private onExecute;

@@ -1,11 +1,11 @@
-import { IToyAdvertisement } from './types';
-import { RollableToy } from './rollable-toy';
-import { IQueuePayload } from './core';
+import { IToyAdvertisement } from "./types";
+import { RollableToy } from "./rollable-toy";
+import { IQueuePayload } from "./core";
 
 export class LightningMcQueen extends RollableToy {
   public static advertisement: IToyAdvertisement = {
-    name: 'Lightning McQueen',
-    prefix: 'LM-',
+    name: "Lightning McQueen",
+    prefix: "LM-",
     class: LightningMcQueen,
   };
 

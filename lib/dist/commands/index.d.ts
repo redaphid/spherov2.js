@@ -1,5 +1,5 @@
-import { ICommandWithRaw, DriveFlag } from './types';
-import { Stance } from '../toys/types';
+import { ICommandWithRaw, DriveFlag } from "./types";
+import { Stance } from "../toys/types";
 export interface IReExport {
   a: DriveFlag;
   b: Stance;
@@ -11,11 +11,7 @@ export declare const factory: (
     echo: () => ICommandWithRaw;
   };
   driving: {
-    drive: (
-      speed: number,
-      heading: number,
-      flags: DriveFlag[]
-    ) => ICommandWithRaw;
+    drive: (speed: number, heading: number, flags: DriveFlag[]) => ICommandWithRaw;
     driveAsRc: (heading: number, speed: number) => ICommandWithRaw;
   };
   power: {
@@ -58,18 +54,8 @@ export declare const factory: (
   };
   sensor: {
     enableCollisionAsync: () => ICommandWithRaw;
-    configureCollision: (
-      xThreshold: number,
-      yThreshold: number,
-      xSpeed: number,
-      ySpeed: number,
-      deadTime: number,
-      method?: number
-    ) => ICommandWithRaw;
-    sensorMask: (
-      sensorRawValue: number,
-      streamingRate: number
-    ) => ICommandWithRaw;
+    configureCollision: (xThreshold: number, yThreshold: number, xSpeed: number, ySpeed: number, deadTime: number, method?: number) => ICommandWithRaw;
+    sensorMask: (sensorRawValue: number, streamingRate: number) => ICommandWithRaw;
     sensorMaskExtended: (mask: number) => ICommandWithRaw;
   };
 };

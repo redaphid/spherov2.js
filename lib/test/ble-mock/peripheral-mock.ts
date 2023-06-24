@@ -1,12 +1,8 @@
-import { Peripheral, Service, Characteristic } from '@abandonware/noble';
-import { CharacteristicUUID, ServicesUUID } from '../../src/toys/types';
-import {
-  CharasteristicMock,
-  ICharacteristicListener,
-} from './characteristic-mock';
+import { Peripheral, Service, Characteristic } from "@abandonware/noble";
+import { CharacteristicUUID, ServicesUUID } from "../../src/toys/types";
+import { CharasteristicMock, ICharacteristicListener } from "./characteristic-mock";
 
-export default class PeripheralMock
-  implements ICharacteristicListener, Peripheral {
+export default class PeripheralMock implements ICharacteristicListener, Peripheral {
   public services: Service[] = [];
   private connected = false;
   private listener: {
@@ -20,38 +16,23 @@ export default class PeripheralMock
     cb();
   }
 
-  public discoverAllServicesAndCharacteristics(
-    callback?: (
-      error: string,
-      services: Service[],
-      characteristics: Characteristic[]
-    ) => void
-  ): void {
+  public discoverAllServicesAndCharacteristics(callback?: (error: string, services: Service[], characteristics: Characteristic[]) => void): void {
     const controlService: Service = {
       characteristics: [
-        (new CharasteristicMock(
-          CharacteristicUUID.apiV2Characteristic,
-          this
-        ) as unknown) as Characteristic,
-        (new CharasteristicMock(
-          CharacteristicUUID.antiDoSCharacteristic,
-          this
-        ) as unknown) as Characteristic,
+        (new CharasteristicMock(CharacteristicUUID.apiV2Characteristic, this) as unknown) as Characteristic,
+        (new CharasteristicMock(CharacteristicUUID.antiDoSCharacteristic, this) as unknown) as Characteristic,
       ],
       uuid: ServicesUUID.apiV2ControlService,
     } as Service;
     const dfuService: Service = {
       characteristics: [
-        (new CharasteristicMock(
-          CharacteristicUUID.dfuControlCharacteristic,
-          this
-        ) as unknown) as Characteristic,
+        (new CharasteristicMock(CharacteristicUUID.dfuControlCharacteristic, this) as unknown) as Characteristic,
         new CharasteristicMock(CharacteristicUUID.dfuInfoCharacteristic, this),
       ],
       uuid: ServicesUUID.nordicDfuService,
     } as Service;
     this.services = [controlService, dfuService];
-    callback('', [], []);
+    callback("", [], []);
   }
 
   public onSubscribe(c: CharasteristicMock): void {
@@ -71,11 +52,7 @@ export default class PeripheralMock
   // TODO
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  public on(
-    c: CharasteristicMock,
-    eventName: string,
-    fn: (data: Buffer, isNotification: boolean) => void
-  ): void {
+  public on(c: CharasteristicMock, eventName: string, fn: (data: Buffer, isNotification: boolean) => void): void {
     if (!this.listener[c.uuid]) {
       this.listener[c.uuid] = {};
     }

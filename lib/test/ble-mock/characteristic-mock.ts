@@ -1,13 +1,9 @@
-import { Characteristic } from '@abandonware/noble';
+import { Characteristic } from "@abandonware/noble";
 
 export interface ICharacteristicListener {
   onSubscribe: (c: CharasteristicMock) => void;
   onWrite: (c: CharasteristicMock, buf: Buffer, notify: boolean) => void;
-  on: (
-    c: CharasteristicMock,
-    eventName: string,
-    fn: (data: Buffer, isNotification: boolean) => void
-  ) => void;
+  on: (c: CharasteristicMock, eventName: string, fn: (data: Buffer, isNotification: boolean) => void) => void;
 }
 
 export class CharasteristicMock implements Characteristic {
@@ -21,11 +17,7 @@ export class CharasteristicMock implements Characteristic {
     this.listener.onSubscribe(this);
     cb();
   }
-  public write(
-    buf: Buffer,
-    notify: boolean,
-    cb: (error?: string) => void
-  ): void {
+  public write(buf: Buffer, notify: boolean, cb: (error?: string) => void): void {
     this.listener.onWrite(this, buf, notify);
     cb();
   }
@@ -33,10 +25,7 @@ export class CharasteristicMock implements Characteristic {
   // TODO
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  public on(
-    eventName: string,
-    fn: (data: Buffer, isNotification: boolean) => void
-  ): this {
+  public on(eventName: string, fn: (data: Buffer, isNotification: boolean) => void): this {
     this.listener.on(this, eventName, fn);
     return this;
   }

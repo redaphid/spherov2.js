@@ -1,4 +1,4 @@
-import { Core, IQueuePayload } from './core';
+import { Core, IQueuePayload } from "./core";
 export declare class RollableToy extends Core {
   /**
    * Rolls the toy
@@ -16,12 +16,7 @@ export declare class RollableToy extends Core {
    * @param  flags   [description]
    * @return         [description]
    */
-  rollTime(
-    speed: number,
-    heading: number,
-    time: number,
-    flags: number[]
-  ): Promise<void>;
+  rollTime(speed: number, heading: number, time: number, flags: number[]): Promise<void>;
   allLEDsRaw(payload: number[]): Promise<IQueuePayload>;
   /**
    * Sets the intensity of the backlight LED

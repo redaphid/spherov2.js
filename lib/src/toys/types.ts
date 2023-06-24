@@ -1,4 +1,4 @@
-import { Core } from './core';
+import { Core } from "./core";
 
 // web
 // export enum ServicesUUID {
@@ -7,16 +7,16 @@ import { Core } from './core';
 // }
 
 export enum ServicesUUID {
-  apiV2ControlService = '00010001574f4f2053706865726f2121',
-  nordicDfuService = '00020001574f4f2053706865726f2121',
+  apiV2ControlService = "00010001574f4f2053706865726f2121",
+  nordicDfuService = "00020001574f4f2053706865726f2121",
 }
 
 export enum CharacteristicUUID {
-  apiV2Characteristic = '00010002574f4f2053706865726f2121',
-  dfuControlCharacteristic = '00020002574f4f2053706865726f2121',
-  dfuInfoCharacteristic = '00020004574f4f2053706865726f2121',
-  antiDoSCharacteristic = '00020005574f4f2053706865726f2121',
-  subsCharacteristic = '00020003574f4f2053706865726f2121',
+  apiV2Characteristic = "00010002574f4f2053706865726f2121",
+  dfuControlCharacteristic = "00020002574f4f2053706865726f2121",
+  dfuInfoCharacteristic = "00020004574f4f2053706865726f2121",
+  antiDoSCharacteristic = "00020005574f4f2053706865726f2121",
+  subsCharacteristic = "00020003574f4f2053706865726f2121",
 }
 
 export interface IToyAdvertisement {
@@ -75,20 +75,9 @@ export enum SensorMaskV2 {
   imuRollAngleFiltered = 1 << 17,
   imuPitchAngleFiltered = 1 << 18,
 
-  gyroFilteredAllV2 = SensorMaskV2.gyroZFilteredV2 |
-    SensorMaskV2.gyroYFilteredV2 |
-    SensorMaskV2.gyroXFilteredV2,
-  gyroFilteredAllV21 = SensorMaskV2.gyroZFilteredV21 |
-    SensorMaskV2.gyroYFilteredV21 |
-    SensorMaskV2.gyroXFilteredV21,
-  imuAnglesFilteredAll = SensorMaskV2.imuYawAngleFiltered |
-    SensorMaskV2.imuRollAngleFiltered |
-    SensorMaskV2.imuPitchAngleFiltered,
-  accelerometerFilteredAll = SensorMaskV2.accelerometerZFiltered |
-    SensorMaskV2.accelerometerYFiltered |
-    SensorMaskV2.accelerometerXFiltered,
-  locatorAll = SensorMaskV2.locatorX |
-    SensorMaskV2.locatorY |
-    SensorMaskV2.velocityX |
-    SensorMaskV2.velocityY,
+  gyroFilteredAllV2 = SensorMaskV2.gyroZFilteredV2 | SensorMaskV2.gyroYFilteredV2 | SensorMaskV2.gyroXFilteredV2,
+  gyroFilteredAllV21 = SensorMaskV2.gyroZFilteredV21 | SensorMaskV2.gyroYFilteredV21 | SensorMaskV2.gyroXFilteredV21,
+  imuAnglesFilteredAll = SensorMaskV2.imuYawAngleFiltered | SensorMaskV2.imuRollAngleFiltered | SensorMaskV2.imuPitchAngleFiltered,
+  accelerometerFilteredAll = SensorMaskV2.accelerometerZFiltered | SensorMaskV2.accelerometerYFiltered | SensorMaskV2.accelerometerXFiltered,
+  locatorAll = SensorMaskV2.locatorX | SensorMaskV2.locatorY | SensorMaskV2.velocityX | SensorMaskV2.velocityY,
 }

@@ -1,6 +1,6 @@
-import { IToyAdvertisement, Stance } from './types';
-import { RollableToy } from './rollable-toy';
-import { IQueuePayload } from './core';
+import { IToyAdvertisement, Stance } from "./types";
+import { RollableToy } from "./rollable-toy";
+import { IQueuePayload } from "./core";
 export declare class R2D2 extends RollableToy {
   static advertisement: IToyAdvertisement;
   protected maxVoltage: number;

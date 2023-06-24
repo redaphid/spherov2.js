@@ -1,4 +1,4 @@
-import { Core, IQueuePayload } from './core';
+import { Core, IQueuePayload } from "./core";
 
 export class RollableToy extends Core {
   /**
@@ -8,14 +8,8 @@ export class RollableToy extends Core {
    * @param  flags   [description]
    * @return         [description]
    */
-  public roll(
-    speed: number,
-    heading: number,
-    flags: number[]
-  ): Promise<IQueuePayload> {
-    return this.queueCommand(
-      this.commands.driving.drive(speed, heading, flags)
-    );
+  public roll(speed: number, heading: number, flags: number[]): Promise<IQueuePayload> {
+    return this.queueCommand(this.commands.driving.drive(speed, heading, flags));
   }
 
   /**
@@ -26,18 +20,11 @@ export class RollableToy extends Core {
    * @param  flags   [description]
    * @return         [description]
    */
-  public async rollTime(
-    speed: number,
-    heading: number,
-    time: number,
-    flags: number[]
-  ) {
+  public async rollTime(speed: number, heading: number, time: number, flags: number[]) {
     let drive = true;
     setTimeout(() => (drive = false), time);
     while (drive) {
-      await this.queueCommand(
-        this.commands.driving.drive(speed, heading, flags)
-      );
+      await this.queueCommand(this.commands.driving.drive(speed, heading, flags));
     }
     await this.queueCommand(this.commands.driving.drive(0, heading, flags));
   }
@@ -69,11 +56,7 @@ export class RollableToy extends Core {
    * @param  b intensity of the blue LED (0 to 255)
    * @return   [description]
    */
-  public setMainLedColor(
-    r: number,
-    g: number,
-    b: number
-  ): Promise<IQueuePayload> {
+  public setMainLedColor(r: number, g: number, b: number): Promise<IQueuePayload> {
     return this.queueCommand(this.commands.userIo.setMainLedColor(r, g, b));
   }
 

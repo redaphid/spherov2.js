@@ -1,5 +1,5 @@
-import { CommandGenerator, ICommandWithRaw } from './types';
-import { Stance } from '../toys/types';
+import { CommandGenerator, ICommandWithRaw } from "./types";
+import { Stance } from "../toys/types";
 declare const _default: (
   generator: CommandGenerator
 ) => {

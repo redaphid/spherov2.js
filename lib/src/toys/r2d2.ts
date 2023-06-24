@@ -1,11 +1,11 @@
-import { IToyAdvertisement, Stance } from './types';
-import { RollableToy } from './rollable-toy';
-import { IQueuePayload } from './core';
+import { IToyAdvertisement, Stance } from "./types";
+import { RollableToy } from "./rollable-toy";
+import { IQueuePayload } from "./core";
 
 export class R2D2 extends RollableToy {
   public static advertisement: IToyAdvertisement = {
-    name: 'R2-D2',
-    prefix: 'D2-',
+    name: "R2-D2",
+    prefix: "D2-",
     class: R2D2,
   };
 
@@ -40,9 +40,7 @@ export class R2D2 extends RollableToy {
   }
 
   public setR2D2FrontLEDColor(r: number, g: number, b: number) {
-    return this.queueCommand(
-      this.commands.userIo.setR2D2FrontLEDColor(r, g, b)
-    );
+    return this.queueCommand(this.commands.userIo.setR2D2FrontLEDColor(r, g, b));
   }
 
   public setR2D2BackLEDcolor(r: number, g: number, b: number) {
@@ -50,15 +48,11 @@ export class R2D2 extends RollableToy {
   }
 
   public setR2D2LogicDisplaysIntensity(i: number) {
-    return this.queueCommand(
-      this.commands.userIo.setR2D2LogicDisplaysIntensity(i)
-    );
+    return this.queueCommand(this.commands.userIo.setR2D2LogicDisplaysIntensity(i));
   }
 
   public setR2D2HoloProjectorIntensity(i: number) {
-    return this.queueCommand(
-      this.commands.userIo.setR2D2HoloProjectorIntensity(i)
-    );
+    return this.queueCommand(this.commands.userIo.setR2D2HoloProjectorIntensity(i));
   }
 
   public startIdleLedAnimation(): Promise<IQueuePayload> {

@@ -1,4 +1,4 @@
-import { CommandGenerator, ICommandWithRaw } from './types';
+import { CommandGenerator, ICommandWithRaw } from "./types";
 declare const _default: (
   generator: CommandGenerator
 ) => {

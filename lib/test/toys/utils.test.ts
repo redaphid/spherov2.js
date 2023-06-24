@@ -1,13 +1,9 @@
-import { parseSensorEvent, sensorValuesToRaw } from '../../src/toys/utils';
-import payload from './sensor-payload';
-import { SensorMaskValues } from '../../src/toys/types';
+import { parseSensorEvent, sensorValuesToRaw } from "../../src/toys/utils";
+import payload from "./sensor-payload";
+import { SensorMaskValues } from "../../src/toys/types";
 
-test('Sensor-Parse', async () => {
-  const mask = sensorValuesToRaw([
-    SensorMaskValues.accelerometer,
-    SensorMaskValues.orientation,
-    SensorMaskValues.locator,
-  ]);
+test("Sensor-Parse", async () => {
+  const mask = sensorValuesToRaw([SensorMaskValues.accelerometer, SensorMaskValues.orientation, SensorMaskValues.locator]);
   const output = parseSensorEvent(payload, mask);
   expect(output).toEqual({
     angles: {

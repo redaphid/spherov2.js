@@ -1,9 +1,4 @@
-import {
-  CommandGenerator,
-  DeviceId,
-  SystemInfoCommandIds,
-  ICommandWithRaw,
-} from './types';
+import { CommandGenerator, DeviceId, SystemInfoCommandIds, ICommandWithRaw } from "./types";
 
 export default (generator: CommandGenerator) => {
   const encode = generator(DeviceId.systemInfo);

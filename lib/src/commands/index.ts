@@ -1,13 +1,13 @@
-import api from './api';
-import driving from './driving';
-import { encode } from './encoder';
-import power from './power';
-import somethingApi from './something-api';
-import systemInfo from './system-info';
-import sensor from './sensor';
-import { Flags, ICommandPartial, ICommandWithRaw, DriveFlag } from './types';
-import userIo from './user-io';
-import { Stance } from '../toys/types';
+import api from "./api";
+import driving from "./driving";
+import { encode } from "./encoder";
+import power from "./power";
+import somethingApi from "./something-api";
+import systemInfo from "./system-info";
+import sensor from "./sensor";
+import { Flags, ICommandPartial, ICommandWithRaw, DriveFlag } from "./types";
+import userIo from "./user-io";
+import { Stance } from "../toys/types";
 
 // WORKAROUND for https://github.com/Microsoft/TypeScript/issues/5711
 export interface IReExport {
