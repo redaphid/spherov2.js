@@ -161,6 +161,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       r: () => {
         // turn around
         heading += 180;
+        if(shift) heading += 90;
         lockedHeading = heading;
       },
       f: () => {
