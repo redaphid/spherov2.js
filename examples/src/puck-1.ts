@@ -34,44 +34,36 @@ const cmdPlay = async (toy: SpheroMini) => {
   await toy.configureCollisionDetection();
 
   const loop = async () => {
-    try {
-      timeSinceLastCollision += waitTime;
-      if (cooldown > 0) {
-        cooldown -= waitTime;
-        await timeout(waitTime);
-        loop();
-        return;
-      }
-      if (speed > 0) {
-        // move mode
-        console.log({ speed, heading });
-        speed -= waitTime;
-        if (timeSinceLastCollision > collisionTimeout) toy.setMainLedColor(0, 255, 0); // show green (move mode)
-      } else {
-        if (timeSinceLastCollision > collisionTimeout) {
-          await toy.setMainLedColor(0, 0, 255); // show blue (idle mode)
-          if (random() < 0.001) {
-            cooldown = 5000; // 1% of the time, stop for 5 seconds
-            await toy.setMainLedColor(0, 0, 0); // light goes out (dead mode)
-          }
+    timeSinceLastCollision += waitTime;
+    if (cooldown > 0) {
+      cooldown -= waitTime;
+      return;
+    }
+    if (speed > 0) {
+      // move mode
+      console.log({ speed, heading });
+      speed -= waitTime;
+      if (timeSinceLastCollision > collisionTimeout) toy.setMainLedColor(0, 255, 0); // show green (move mode)
+    } else {
+      if (timeSinceLastCollision > collisionTimeout) {
+        await toy.setMainLedColor(0, 0, 255); // show blue (idle mode)
+        if (random() < 0.001) {
+          cooldown = 5000; // 1% of the time, stop for 5 seconds
+          await toy.setMainLedColor(0, 0, 0); // light goes out (dead mode)
         }
       }
-
-      if (timeSinceLastCollision > collisionTimeout) heading += random(-10, 10); // jiggle if we haven't collided recently
-      if (random() < 0.01) heading += 200; // randomly turn around some of the time
-      heading = Math.abs(Math.floor(heading % 360) || 0); // keep heading between 0 and 360
-
-      if (random() < 0.01) speed = 25; // randomly start moving some of the time
-      let speedToGo = speed > 0 ? speed * 10 + 100 : 0; // if we weren't moving, don't move
-      if (timeSinceLastCollision < collisionTimeout) speedToGo = 1000; // if we've collided recently, go fast
-      await toy.roll(speedToGo, heading, []);
-    } catch (e) {
-      console.log(e);
-      cooldown = 100;
     }
-    await timeout(waitTime);
-    loop();
+
+    if (timeSinceLastCollision > collisionTimeout) heading += random(-10, 10); // jiggle if we haven't collided recently
+    if (random() < 0.01) heading += 200; // randomly turn around some of the time
+    heading = Math.abs(Math.floor(heading % 360) || 0); // keep heading between 0 and 360
+
+    if (random() < 0.01) speed = 25; // randomly start moving some of the time
+    let speedToGo = speed > 0 ? speed * 10 + 100 : 0; // if we weren't moving, don't move
+    if (timeSinceLastCollision < collisionTimeout) speedToGo = 1000; // if we've collided recently, go fast
+    await toy.roll(speedToGo, heading, []);
   };
+
   const collide = () => {
     if (timeSinceLastCollision < 100) return; // ignore collisions that are too close together
     speed = 500; // if we collide, speed up by 500. this will switch us to "move mode"
@@ -84,16 +76,11 @@ const cmdPlay = async (toy: SpheroMini) => {
   };
   toy.on(Event.onCollision, collide);
 
-  // try to "sort of" control the sphere with the keyboard
-  const intervalTimes = (time: number, fn: () => void) => {
-    if (time <= 0) return;
-    fn();
-    setTimeout(() => intervalTimes(time - 1, fn), time - 1);
-  };
+  setInterval(() => { if (isHeadingLocked) heading = lockedHeading; }, 100);
+  setInterval(() => { if (isSpeedLocked) speed = lockedSpeed; }, 100);
+
   stdin.setRawMode(true);
   emitKeypressEvents(stdin);
-  setInterval(() => { if (isHeadingLocked) heading = lockedHeading;}, 100);
-  setInterval(() => { if (isSpeedLocked) speed = lockedSpeed; }, 100);
   const turningSpeed = 23;
   stdin.on("keypress", (ch, { name: key, ctrl }) => {
     const keyToActionMap = {
@@ -107,13 +94,13 @@ const cmdPlay = async (toy: SpheroMini) => {
         console.log({ isHeadingLocked });
         lockedHeading = heading;
       },
-      q: () => {
+      e: () => {
         // lock(ish) the speed
         isSpeedLocked = !isSpeedLocked;
         console.log({ isSpeedLocked });
         lockedSpeed = speed;
       },
-      s: () => {
+      q: () => {
         // sleep
         console.log("sleep");
         toy.setMainLedColor(0, 0, 0);
@@ -134,6 +121,11 @@ const cmdPlay = async (toy: SpheroMini) => {
       w: () => {
         console.log(`speed going from ${speed} to ${speed + 10}`);
         speed += 10;
+        lockedSpeed = speed;
+      },
+      s: () => {
+        console.log(`speed going from ${speed} to ${speed - 10}`);
+        speed -= 10;
         lockedSpeed = speed;
       },
 
@@ -163,7 +155,16 @@ const cmdPlay = async (toy: SpheroMini) => {
     if (keyToActionMap[key]) keyToActionMap[key]();
   });
 
-  loop();
+  while (true) {
+    await timeout(waitTime);
+    try {
+      await loop();
+    }
+    catch (e) {
+      console.log(e);
+      cooldown = 100;
+    }
+  }
 };
 
 starter(cmdPlay);
