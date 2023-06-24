@@ -132,6 +132,11 @@ const cmdPlay = async (toy: SpheroMini) => {
         lockedSpeed = speed;
       },
       space: () => {
+        if(speed === 0) {
+          speed = 255
+          lockedSpeed = speed;
+          return
+        }
         speed = 0
         lockedSpeed = speed;
       },
