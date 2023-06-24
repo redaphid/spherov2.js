@@ -35,15 +35,32 @@ const cmdPlay = async (toy: SpheroMini) => {
     return randomValue * (max - min) + min;
   };
 
-  const intervalTimes = ({fn, times=10,interval=50}:{fn: () => any, times?:number, interval?:number}) => {
-    const id = setInterval(() => {
-      if (!times--) return clearInterval(id);
-      fn();
-    },interval)
-  }
+  const allIntervals: Array<NodeJS.Timeout> = [];
+  const clearAllIntervals = () => {
+    allIntervals.forEach((id) => clearInterval(id));
+    allIntervals.length = 0;
+  };
+
+  const intervalTimes = ({ fn, times = 10, interval = 50 }: { fn: () => any, times?: number, interval?: number }) => {
+    const results = [];
+    return new Promise<Array<any>>((resolve) => {
+      const id = setInterval(() => {
+        if (times--) {
+          const result = fn();
+          results.push(result)
+          return
+        }
+        clearInterval(id);
+        resolve(Promise.all(results));
+
+      }, interval);
+      allIntervals.push(id);
+    });
+  };
+
 
   const jiggle = async () => {
-    intervalTimes({fn:() => heading += Math.random()})
+    intervalTimes({ fn: () => heading += Math.random() })
   }
 
   const loop = async () => {
@@ -144,7 +161,7 @@ const cmdPlay = async (toy: SpheroMini) => {
         lockedSpeed = speed;
       },
       space: () => {
-        if(speed === 0) {
+        if (speed === 0) {
           speed = 255
           lockedSpeed = speed;
           boost = true
@@ -174,7 +191,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       r: () => {
         // turn around
         heading += 180;
-        if(shift) heading += 90;
+        if (shift) heading += 90;
         lockedHeading = heading;
       },
       f: () => {
@@ -194,7 +211,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     // clear the console
     try {
       await loop();
-      if(isCooldownLocked) cooldown = lockedCooldown;
+      if (isCooldownLocked) cooldown = lockedCooldown;
     } catch (e) {
       console.log(e);
       cooldown = 100;
