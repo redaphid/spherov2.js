@@ -55,7 +55,6 @@ const cmdPlay = async (toy: SpheroMini) => {
     }
     if (isSpeedLocked) speed = lockedSpeed;
     if (isHeadingLocked) heading = lockedHeading;
-    if (isCooldownLocked) cooldown = lockedCooldown;
     if (speed < 0) {
       heading += 180;
       speed = Math.abs(speed);
@@ -181,6 +180,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     // clear the console
     try {
       await loop();
+      if(isCooldownLocked) cooldown = lockedCooldown;
     } catch (e) {
       console.log(e);
       cooldown = 100;
