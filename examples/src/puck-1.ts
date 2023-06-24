@@ -39,7 +39,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     if (cooldown > 0) return (cooldown -= waitTime);
 
     if (random() < 0.001) return cooldown = 1000; // randomly sleep
-    if (random() < 0.005) speed = 128; // randomly speed up
+    if (random() < 0.005) speed += 128; // randomly speed up
     if (random() < 0.01) heading += 200; // randomly turn around
     speed = Math.max(0, speed - 3);
     if (timeSinceLastCollision > collisionTimeout) {
