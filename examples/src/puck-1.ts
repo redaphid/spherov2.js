@@ -1,7 +1,7 @@
 import { emitKeypressEvents } from "readline";
 import { stdin } from "process";
 
-import { SpheroMini, Event } from "../../lib";
+import { SpheroMini, Event, DriveFlag } from "../../lib";
 import { starter } from "./utils/starter";
 
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -25,6 +25,8 @@ const cmdPlay = async (toy: SpheroMini) => {
   let isCooldownLocked = false;
   let cooldown = 0;
   let lockedCooldown = 0;
+
+  let boost = false;
 
   const random = (min: number = 0, max: number = 1) => {
     let randomValue = isRandomLocked ? lockedRandom : Math.random();
@@ -51,8 +53,6 @@ const cmdPlay = async (toy: SpheroMini) => {
         toy.setMainLedColor(0, 0, 255); // blue
       }
     }
-    heading = Math.floor(heading % 360)
-    if (heading < 0) heading += 360
     if (isSpeedLocked) speed = lockedSpeed;
     if (isHeadingLocked) heading = lockedHeading;
     if (isCooldownLocked) cooldown = lockedCooldown;
@@ -64,7 +64,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     speed = Math.min(255, speed);
     if (heading < 0) heading += 360
 
-    await toy.roll(speed, heading, []);
+    await toy.roll(speed, heading, boost ? [DriveFlag.boost] : []);
   };
 
   const collide = () => {
@@ -135,6 +135,8 @@ const cmdPlay = async (toy: SpheroMini) => {
         if(speed === 0) {
           speed = 255
           lockedSpeed = speed;
+          boost = true
+          setTimeout(() => boost = false, 1000)
           return
         }
         speed = 0
