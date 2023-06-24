@@ -55,6 +55,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     heading = Math.floor(heading % 360)
     if (heading < 0) heading += 360
   };
+
   const collide = () => {
     if (timeSinceLastCollision < 100) return; // ignore collisions that are too close together
     timeSinceLastCollision = 0;
@@ -156,6 +157,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     // clear the console
     try {
       await loop();
+
       if (isSpeedLocked) speed = lockedSpeed;
       if (isHeadingLocked) heading = lockedHeading;
       if (isCooldownLocked) cooldown = lockedCooldown;
