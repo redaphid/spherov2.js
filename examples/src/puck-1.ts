@@ -39,11 +39,10 @@ const cmdPlay = async (toy: SpheroMini) => {
     if (cooldown > 0) return (cooldown -= waitTime);
 
     if (random() < 0.001) return cooldown = 1000; // randomly sleep
-    if (random() < 0.005) speed = 25; // randomly speed up
+    if (random() < 0.005) speed = 128; // randomly speed up
     if (random() < 0.01) heading += 200; // randomly turn around
-
+    speed = Math.max(0, speed - 3);
     if (timeSinceLastCollision > collisionTimeout) {
-      speed = Math.max(0, speed - 1);
       heading += random(-10, 10); // jitter around if we're not running away from a collision
       if (speed > 0) {
         toy.setMainLedColor(0, 255, 0); // green
@@ -54,12 +53,24 @@ const cmdPlay = async (toy: SpheroMini) => {
     }
     heading = Math.floor(heading % 360)
     if (heading < 0) heading += 360
+    if (isSpeedLocked) speed = lockedSpeed;
+    if (isHeadingLocked) heading = lockedHeading;
+    if (isCooldownLocked) cooldown = lockedCooldown;
+    if (speed < 0) {
+      heading += 180;
+      speed = Math.abs(speed);
+    }
+    heading = Math.floor(heading % 360)
+    speed = Math.min(255, speed);
+    if (heading < 0) heading += 360
+
+    await toy.roll(speed, heading, []);
   };
 
   const collide = () => {
     if (timeSinceLastCollision < 100) return; // ignore collisions that are too close together
     timeSinceLastCollision = 0;
-    speed = 100
+    speed = 255
     heading += 180; //turn around
     cooldown = 0; // stop idling
     // turn the led red
@@ -120,6 +131,11 @@ const cmdPlay = async (toy: SpheroMini) => {
         speed -= increment;
         lockedSpeed = speed;
       },
+      space: () => {
+        speed = 0
+        lockedSpeed = speed;
+      },
+
       a: () => {
         if (ctrl) return (isHeadingLocked = !isHeadingLocked);
         let increment = turningSpeed;
@@ -139,6 +155,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       r: () => {
         // turn around
         heading += 180;
+        lockedHeading = heading;
       },
       f: () => {
         if (flashlight) {
@@ -157,12 +174,6 @@ const cmdPlay = async (toy: SpheroMini) => {
     // clear the console
     try {
       await loop();
-
-      if (isSpeedLocked) speed = lockedSpeed;
-      if (isHeadingLocked) heading = lockedHeading;
-      if (isCooldownLocked) cooldown = lockedCooldown;
-
-      await toy.roll(speed > 0 ? speed * 10 + 100 : 0, heading, []);
     } catch (e) {
       console.log(e);
       cooldown = 100;
