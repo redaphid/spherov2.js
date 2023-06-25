@@ -6,9 +6,10 @@ import { starter } from "./utils/starter";
 
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const cmdPlay = async (toy: SpheroMini) => {
+  toy.configureCollisionDetection(55,55);
   let waitTime = 1;
   let flashlight = false;
-  const collisionTimeout = 100;
+  const collisionTimeout = 50;
   let timeSinceLastCollision = 9999;
 
   let heading = 0;
@@ -60,7 +61,19 @@ const cmdPlay = async (toy: SpheroMini) => {
 
 
   const jiggle = async () => {
-    intervalTimes({ fn: async () => heading += await random(-45,45) })
+    intervalTimes({ fn: async () => (heading += await random(-45,45))%360, times: 100, interval: 250 })
+  }
+
+  const backAndForth = async () => {
+    // go straight forward
+    intervalTimes({ fn: async () => speed = 255, times: 10000, interval: 100 })
+    intervalTimes({ fn: async () => heading +=180, times: 10000, interval: 5000 })
+    // when we hit the wall, turn around
+    const startedAt = Date.now()
+    const turnAround = async () => {
+      heading += 180 + await random(-45,45);
+    };
+    toy.on(Event.onCollision, turnAround);
   }
 
   const loop = async () => {
@@ -116,6 +129,9 @@ const cmdPlay = async (toy: SpheroMini) => {
       },
       j: () => {
         jiggle()
+      },
+      b: () =>{
+        backAndForth()
       },
       q: () => {
         toy.setMainLedColor(0, 0, 0);
