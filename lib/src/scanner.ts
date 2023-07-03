@@ -78,6 +78,14 @@ export const find = async <T extends Core>(toyType: IToyAdvertisement, name?: st
       console.log("No UUID found in .env file. Please add MY_UUID=<your uuid> when running command");
       console.log("Starting first toy found...");
       const discoveredItem = toys.find((item) => item.peripheral.advertisement.localName === name) || toys[0];
+
+      if (!discoveredItem) {
+        console.log("Not found");
+        // await wait(100);
+        console.log("Retrying...");
+        return await find(toyType, name);
+      }
+
       const toy: Core = new toyType.class(discoveredItem.peripheral);
       await startToy(toy);
       return toy as T;
@@ -86,6 +94,14 @@ export const find = async <T extends Core>(toyType: IToyAdvertisement, name?: st
     const discoveredItem = toys.find((item) => {
       return item.peripheral.uuid === process.env.MY_UUID;
     });
+
+    if (!discoveredItem) {
+      console.log("Not found");
+      // await wait(100);
+      console.log("Retrying...");
+      return await find(toyType, name);
+    }
+
     const toy: Core = new toyType.class(discoveredItem.peripheral);
     await startToy(toy);
     return toy as T;
@@ -93,30 +109,6 @@ export const find = async <T extends Core>(toyType: IToyAdvertisement, name?: st
     console.log("No toys found");
   }
 };
-
-// const find = async (toyType, name) => {
-//   const toys = await exports.findToys([toyType]);
-
-//   if (toys && toys.length > 0) {
-//     if (!process.env.MY_UUID) {
-//       console.log("No UUID found in .env file. Please add MY_UUID=<your uuid> when running command");
-//       console.log("Starting first toy found...");
-//       const discoveredItem = toys.find((item) => item.peripheral.advertisement.localName === name) || toys[0];
-//       const toy = new toyType.class(discoveredItem.peripheral);
-//       await startToy(toy);
-//       return toy;
-//     }
-
-//     const discoveredItem = toys.find((item) => {
-//       return item.peripheral.uuid === process.env.MY_UUID;
-//     });
-//     const toy = new toyType.class(discoveredItem.peripheral);
-//     await startToy(toy);
-//     return toy;
-//   } else {
-//     console.log("No toys found");
-//   }
-// };
 
 /**
  * Searches toys that match the passed criteria, starts and returns them
