@@ -28,7 +28,7 @@ const cmdPlay = async (toy: SpheroMini) => {
   let lockedCooldown = 0;
 
   let boost = false;
-
+  let msg = ""
   const random = async (min: number = 0, max: number = 1) => {
     let randomValue = isRandomLocked ? lockedRandom : Math.random();
     lockedRandom = randomValue;
@@ -125,7 +125,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     const keyToActionMap = {
       c: () => {
         if (ctrl) process.exit();
-        collide();
+        clearAllIntervals()
       },
       j: () => {
         jiggle()
@@ -219,7 +219,11 @@ const cmdPlay = async (toy: SpheroMini) => {
         flashlight = !flashlight;
       },
     };
-    if (keyToActionMap[key]) keyToActionMap[key]();
+    if (keyToActionMap[key]) {
+      keyToActionMap[key]()
+    } else {
+      msg = `keys you can use: ${Object.keys(keyToActionMap).join(', ')} . You can usually use control and shift with these`
+    }
   });
 
   while (true) {
@@ -240,6 +244,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       random: { value: parseFloat(lockedRandom.toFixed(4)), locked: isRandomLocked },
       timeSinceLastCollision: { value: timeSinceLastCollision, locked: false },
     });
+    console.log(msg);
   }
 };
 
