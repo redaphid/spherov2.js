@@ -14,23 +14,23 @@ export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
 
       if (!robotName) {
         fn(sphero);
-        break;
+        return
       }
 
       if (sphero.id === robotName || robotRegistry[sphero.id] === robotName) {
         fn(sphero);
-        break;
+        return
       }
 
       // lazy match the first few characters of id
       if(robotName.endsWith("*") && sphero.id.startsWith(robotName.slice(0, -1))) {
         fn(sphero);
-        break;
+        return
       }
-
-      continue;
+      console.log("but not the one we're looking for");
     }
+    console.log('rescanning');
+    setTimeout(findAndStart, 100);
   }
-  console.log('rescanning');
-  setTimeout(findAndStart, 100);
+  findAndStart();
 }
