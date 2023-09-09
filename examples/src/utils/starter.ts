@@ -11,18 +11,26 @@ export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
     const spheros = await Scanner.findAll(SpheroMini.advertisement);
     for (const sphero of spheros) {
       console.log(`found: ${robotRegistry[sphero.id] || sphero.id}`);
-      if (robotName) {
-        if (sphero.id === robotName || robotRegistry[sphero.id] === robotName) {
-          fn(sphero);
-          break;
-        }
-        continue;
+
+      if (!robotName) {
+        fn(sphero);
+        break;
       }
-      fn(sphero);
-      break;
+
+      if (sphero.id === robotName || robotRegistry[sphero.id] === robotName) {
+        fn(sphero);
+        break;
+      }
+
+      // lazy match the first few characters of id
+      if(robotName.endsWith("*") && sphero.id.startsWith(robotName.slice(0, -1))) {
+        fn(sphero);
+        break;
+      }
+
+      continue;
     }
-    console.log('rescanning');
-    setTimeout(findAndStart, 100);
   }
-  findAndStart();
-};
+  console.log('rescanning');
+  setTimeout(findAndStart, 100);
+}
