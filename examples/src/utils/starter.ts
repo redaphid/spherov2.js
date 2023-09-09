@@ -5,22 +5,26 @@ const robotRegistry = {
   "c75d2e4ee665d78e80853548bacfac01": "crude-dolphin",
   "bc6ce81a687119e1c81a56ef58d59dbd": "defective-bear",
 }
+
+const knownRobots = Object.keys(robotRegistry);
+
 export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
-  const spheros = await Scanner.findAll(SpheroMini.advertisement);
-  for (const sphero of spheros) {
-    if(robotRegistry[sphero.id]) {
-      console.log(`Found ${robotRegistry[sphero.id]}`);
-    } else {
-      console.log(`unknown robot ${sphero.id}`);
-    }
-    if(robotName) {
-      if(robotRegistry[sphero.id] === robotName) {
-        fn(sphero);
-        break;
+  const findAndStart = async () => {
+    const spheros = await Scanner.findAll(SpheroMini.advertisement);
+    for (const sphero of spheros) {
+      console.log(`found: ${robotRegistry[sphero.id] || sphero.id}`);
+      if (robotName) {
+        if (robotRegistry[sphero.id] === robotName || knownRobots.includes(robotName)) {
+          fn(sphero);
+          break;
+        }
+        continue;
       }
-      continue;
+      fn(sphero);
+      break;
     }
-    fn(sphero);
-    break;
+    console.log('rescanning');
+    setTimeout(findAndStart, 100);
   }
+  findAndStart();
 };
