@@ -22,6 +22,7 @@ export enum CharacteristicUUID {
 export interface IToyAdvertisement {
   name: string;
   prefix: string;
+  id?: string;
   class: typeof Core;
 }
 

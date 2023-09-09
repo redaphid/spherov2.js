@@ -52,13 +52,16 @@ export class Core {
   private initPromise: Promise<void>;
   private initPromiseResolve: () => any;
   private eventsListeners: EventMap;
+
+  readonly id?: string;
   private sensorMask: ISensorMaskRaw = {
     v2: [],
     v21: [],
   };
 
-  constructor(p: Peripheral) {
+  constructor(p: Peripheral, id: string) {
     this.peripheral = p;
+    this.id = id;
   }
 
   /**

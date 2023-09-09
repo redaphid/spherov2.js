@@ -22,8 +22,8 @@ const discover = async (validToys: IToyAdvertisement[], toys: IToyDiscovered[], 
   const { advertisement, uuid } = p;
   const { localName = "" } = advertisement;
   validToys.forEach(async (toyAdvertisement) => {
-    if (localName.indexOf(toyAdvertisement.prefix) === 0) {
-      toys.push({ ...toyAdvertisement, peripheral: p });
+    if (localName.indexOf(toyAdvertisement?.prefix) === 0) {
+      toys.push({ ...toyAdvertisement, peripheral: p, id: uuid});
 
       console.log(`name: ${toyAdvertisement.name}, uuid: ${uuid}, mac-address: ${p.address}`);
     }
@@ -81,7 +81,7 @@ export const find = async <T extends Core>(toyType: IToyAdvertisement, name?: st
     return await find(toyType, name);
   }
 
-  const toy: Core = new toyType.class(discoveredItem.peripheral);
+  const toy: Core = new toyType.class(discoveredItem.peripheral, discoveredItem.id);
 
   await startToy(toy);
 
@@ -97,7 +97,7 @@ export const findAll = async (toyType: IToyAdvertisement) => {
     // Init toys and return array
     return await discovered.reduce(async (promise: Promise<Core[]>, item) => {
       const toyArray = await promise;
-      const toy: Core = new toyType.class(item.peripheral);
+      const toy: Core = new toyType.class(item.peripheral, item.id);
       await startToy(toy);
       return [...toyArray, toy];
     }, Promise.resolve([]));
