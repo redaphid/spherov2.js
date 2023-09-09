@@ -222,7 +222,7 @@ const cmdPlay = async (toy: SpheroMini) => {
     if (keyToActionMap[key]) {
       keyToActionMap[key]()
     } else {
-      msg = `keys you can use: ${Object.keys(keyToActionMap).join(', ')} . You can usually use control and shift with these`
+      msg = `keys you can use: ${Object.keys(keyToActionMap).join(', ')}. You can usually use control and shift with these`
     }
   });
 
