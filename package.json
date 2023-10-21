@@ -14,7 +14,7 @@
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
     "prettier": "lint-staged",
-    "prettier-format": "prettier --config .prettierrc '**/*.ts' --write",
+    "prettier-format": "prettier --config .prettierrc '**/*.ts' --write"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.15.2",
