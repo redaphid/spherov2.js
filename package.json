@@ -20,23 +20,6 @@
     "add-all": "git add -A",
     "docs": "rm -fR docs; typedoc --excludeExternals --excludeProtected --excludePrivate --exclude './lib/src/**/*.ts' --theme minimal --readme none --out docs --mode modules ."
   },
-  "pre-commit": [
-    "precommit-msg",
-    "lint",
-    "test",
-    "add-all"
-  ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn precommit-msg && yarn prettier && yarn lint && yarn test && yarn add-all"
-    }
-  },
-  "lint-staged": {
-    "*.{js,json,css,md}": [
-      "prettier --write --config .prettierrc ",
-      "git add"
-    ]
-  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
