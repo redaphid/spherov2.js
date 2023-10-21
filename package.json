@@ -11,7 +11,6 @@
     "npm": "npm",
     "release": "release-it",
     "test": "yarn workspaces run test",
-    "husky": "node ./node_modules/husky/run install",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix",
     "precommit-msg": "echo 'Pre-commit checks...' && exit 0",
