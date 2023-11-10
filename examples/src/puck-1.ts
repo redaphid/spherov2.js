@@ -145,30 +145,36 @@ const cmdPlay = async (toy: SpheroMini) => {
 
       z: () => {
         if (ctrl) return (isRandomLocked = !isRandomLocked)
+
         let increment = 0.005
         if (shift) increment *= 5
         lockedRandom += increment
       },
       x: () => {
         if (ctrl) return (isRandomLocked = !isRandomLocked)
+
         let increment = 0.005
         if (shift) increment *= 5
         lockedRandom -= increment
       },
       w: () => {
         if (ctrl) return (isSpeedLocked = !isSpeedLocked)
+
         let increment = 10
         if (shift) increment *= 5
         speed += increment
         lockedSpeed = speed
       },
+
       s: () => {
         if (ctrl) return (isSpeedLocked = !isSpeedLocked)
+
         let increment = 10
         if (shift) increment *= 5
         speed -= increment
         lockedSpeed = speed
       },
+
       space: () => {
         if (speed === 0) {
           speed = 255
@@ -177,12 +183,14 @@ const cmdPlay = async (toy: SpheroMini) => {
           setTimeout(() => (boost = false), 1000)
           return
         }
+
         speed = 0
         lockedSpeed = speed
       },
 
       a: () => {
         if (ctrl) return (isHeadingLocked = !isHeadingLocked)
+
         let increment = turningSpeed
         if (shift) increment *= 5
         heading -= increment
@@ -191,6 +199,7 @@ const cmdPlay = async (toy: SpheroMini) => {
 
       d: () => {
         if (ctrl) return (isHeadingLocked = !isHeadingLocked)
+
         let increment = turningSpeed
         if (shift) increment *= 5
         heading += increment
@@ -203,6 +212,7 @@ const cmdPlay = async (toy: SpheroMini) => {
         if (shift) heading += 90
         lockedHeading = heading
       },
+
       f: () => {
         if (flashlight) {
           toy.setBackLedIntensity(0)
