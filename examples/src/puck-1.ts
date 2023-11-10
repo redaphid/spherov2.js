@@ -122,13 +122,6 @@ const cmdPlay = async (toy: SpheroMini) => {
     const keyToActionMap = {
       c: () => {
         if (ctrl) process.exit()
-        clearAllIntervals()
-      },
-      j: () => {
-        jiggle()
-      },
-      b: () => {
-        backAndForth()
       },
       q: () => {
         toy.setMainLedColor(0, 0, 0)
@@ -215,6 +208,9 @@ const cmdPlay = async (toy: SpheroMini) => {
         }
         flashlight = !flashlight
       },
+      // behaviors
+      j: jiggle,
+      b: backAndForth,
     }
     if (keyToActionMap[key]) {
       keyToActionMap[key]()
