@@ -67,7 +67,6 @@ const cmdPlay = async (toy: SpheroMini) => {
     intervalTimes({ fn: async () => (speed = 255), times: 10000, interval: 100 })
     intervalTimes({ fn: async () => (heading += 180), times: 10000, interval: 5000 })
     // when we hit the wall, turn around
-    const startedAt = Date.now()
     const turnAround = async () => {
       heading += 180 + (await random(-45, 45))
     }
@@ -81,7 +80,8 @@ const cmdPlay = async (toy: SpheroMini) => {
     if ((await random()) < 0.001) return (cooldown = 1000) // randomly sleep
     if ((await random()) < 0.005) speed += 128 // randomly speed up
     if ((await random()) < 0.01) heading += 200 // randomly turn around
-    speed = Math.max(0, speed - 3)
+
+    speed = Math.max(0, speed - 3) // slow down over time
     if (timeSinceLastCollision > collisionTimeout) {
       heading += await random(-10, 10) // jitter around if we're not running away from a collision
       if (speed > 0) {
@@ -90,8 +90,10 @@ const cmdPlay = async (toy: SpheroMini) => {
         toy.setMainLedColor(0, 0, 255) // blue
       }
     }
+
     if (isSpeedLocked) speed = lockedSpeed
     if (isHeadingLocked) heading = lockedHeading
+
     if (speed < 0) {
       heading += 180
       speed = Math.abs(speed)
