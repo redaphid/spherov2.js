@@ -1,7 +1,7 @@
-import { CommandGenerator, DeviceId, SystemInfoCommandIds, ICommandWithRaw } from "./types";
+import { CommandGenerator, DeviceId, SystemInfoCommandIds, ICommandWithRaw } from "./types"
 
 export default (generator: CommandGenerator) => {
-  const encode = generator(DeviceId.systemInfo);
+  const encode = generator(DeviceId.systemInfo)
   return {
     appVersion: (): ICommandWithRaw =>
       encode({
@@ -22,5 +22,5 @@ export default (generator: CommandGenerator) => {
       encode({
         commandId: SystemInfoCommandIds.something7, // Maybe voltages??
       }),
-  };
-};
+  }
+}

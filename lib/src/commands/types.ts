@@ -122,81 +122,81 @@ export type CommandId =
   | SystemInfoCommandIds
   | APIProcessCommandIds
   | SensorCommandIds
-  | SomethingApi;
+  | SomethingApi
 
 export interface ICommandOutput {
-  bytes: number[];
-  checksum: number;
+  bytes: number[]
+  checksum: number
 }
 
 export interface ICommandPartial {
-  payload?: number[];
-  commandId: CommandId;
-  targetId?: number;
-  sourceId?: number;
+  payload?: number[]
+  commandId: CommandId
+  targetId?: number
+  sourceId?: number
 }
 
 export interface ICommand extends ICommandPartial {
-  deviceId: DeviceId;
-  commandFlags?: Flags[];
-  sequenceNumber: number;
+  deviceId: DeviceId
+  commandFlags?: Flags[]
+  sequenceNumber: number
 }
 
 export interface ICommandWithRaw extends ICommand {
-  raw: Uint8Array;
+  raw: Uint8Array
 }
 
-export type CommandGenerator = (deviceId: number) => (part: ICommandPartial) => ICommandWithRaw;
+export type CommandGenerator = (deviceId: number) => (part: ICommandPartial) => ICommandWithRaw
 
 export interface IThreeAxisSensor {
-  x: number;
-  y: number;
-  z: number;
+  x: number
+  y: number
+  z: number
 }
 
 export interface ITwoAxisSensor {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 export interface ISensorResponse {
-  angles?: { pitch: number; roll: number; yaw: number };
+  angles?: { pitch: number; roll: number; yaw: number }
   accelerometer?: {
-    filtered: IThreeAxisSensor;
-  };
+    filtered: IThreeAxisSensor
+  }
   locator?: {
-    position: ITwoAxisSensor;
-    velocity: ITwoAxisSensor;
-  };
+    position: ITwoAxisSensor
+    velocity: ITwoAxisSensor
+  }
   gyro?: {
-    filtered: IThreeAxisSensor;
-  };
+    filtered: IThreeAxisSensor
+  }
 }
 
 export interface SensorData {
   angles: {
-    pitch: number;
-    roll: number;
-    yaw: number;
-  };
+    pitch: number
+    roll: number
+    yaw: number
+  }
   accelerometer: {
     filtered: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
+      x: number
+      y: number
+      z: number
+    }
+  }
   gyro: {
     filtered: {
-      x: number;
-      y: number;
-      z: number;
-    };
-  };
+      x: number
+      y: number
+      z: number
+    }
+  }
   locator: {
     position: {
-      x: number;
-      y: number;
-    };
-  };
+      x: number
+      y: number
+    }
+  }
 }

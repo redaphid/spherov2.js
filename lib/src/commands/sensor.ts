@@ -1,7 +1,7 @@
-import { CommandGenerator, DeviceId, SensorCommandIds, ICommandWithRaw } from "./types";
+import { CommandGenerator, DeviceId, SensorCommandIds, ICommandWithRaw } from "./types"
 
 export default (generator: CommandGenerator) => {
-  const encode = generator(DeviceId.sensor);
+  const encode = generator(DeviceId.sensor)
   return {
     enableCollisionAsync: (): ICommandWithRaw =>
       encode({
@@ -37,21 +37,21 @@ export default (generator: CommandGenerator) => {
         (sensorRawValue >> 16) & 0xff,
         (sensorRawValue >> 8) & 0xff,
         sensorRawValue & 0xff,
-      ];
+      ]
       return encode({
         commandId: SensorCommandIds.sensorMask,
         targetId: 0x12,
         payload: bytes,
-      });
+      })
     },
 
     sensorMaskExtended: (mask: number): ICommandWithRaw => {
-      const bytes = [(mask >> 24) & 0xff, (mask >> 16) & 0xff, (mask >> 8) & 0xff, mask & 0xff];
+      const bytes = [(mask >> 24) & 0xff, (mask >> 16) & 0xff, (mask >> 8) & 0xff, mask & 0xff]
       return encode({
         commandId: SensorCommandIds.sensorMaskExtended,
         targetId: 0x12,
         payload: bytes,
-      });
+      })
     },
-  };
-};
+  }
+}

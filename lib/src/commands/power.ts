@@ -1,7 +1,7 @@
-import { CommandGenerator, DeviceId, PowerCommandIds, ICommandWithRaw } from "./types";
+import { CommandGenerator, DeviceId, PowerCommandIds, ICommandWithRaw } from "./types"
 
 export default (generator: CommandGenerator) => {
-  const encode = generator(DeviceId.powerInfo);
+  const encode = generator(DeviceId.powerInfo)
   return {
     batteryVoltage: (): ICommandWithRaw =>
       encode({
@@ -30,5 +30,5 @@ export default (generator: CommandGenerator) => {
         targetId: 0x11,
         commandId: PowerCommandIds.wake,
       }),
-  };
-};
+  }
+}

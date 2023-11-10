@@ -1,9 +1,9 @@
-import { AnimatronicsCommandIds, CommandGenerator, DeviceId, UserIOCommandIds, ICommandWithRaw } from "./types";
-import { Stance } from "../toys/types";
+import { AnimatronicsCommandIds, CommandGenerator, DeviceId, UserIOCommandIds, ICommandWithRaw } from "./types"
+import { Stance } from "../toys/types"
 
 export default (generator: CommandGenerator) => {
-  const encode = generator(DeviceId.userIO);
-  const encodeAnimatronics = generator(DeviceId.animatronics);
+  const encode = generator(DeviceId.userIO)
+  const encodeAnimatronics = generator(DeviceId.animatronics)
   return {
     allLEDsRaw: (payload: number[]): ICommandWithRaw =>
       encode({
@@ -108,5 +108,5 @@ export default (generator: CommandGenerator) => {
         commandId: UserIOCommandIds.audioVolume,
         payload: [vol],
       }),
-  };
-};
+  }
+}

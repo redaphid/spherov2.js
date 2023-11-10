@@ -1,4 +1,4 @@
-import { Core } from "./core";
+import { Core } from "./core"
 
 // web
 // export enum ServicesUUID {
@@ -20,10 +20,10 @@ export enum CharacteristicUUID {
 }
 
 export interface IToyAdvertisement {
-  name: string;
-  prefix: string;
-  id?: string;
-  class: typeof Core;
+  name: string
+  prefix: string
+  id?: string
+  class: typeof Core
 }
 
 export enum Stance {
@@ -50,8 +50,8 @@ export enum SensorControlDefaults {
 }
 
 export interface ISensorMaskRaw {
-  v2: SensorMaskV2[];
-  v21: SensorMaskV2[];
+  v2: SensorMaskV2[]
+  v21: SensorMaskV2[]
 }
 
 export enum SensorMaskV2 {

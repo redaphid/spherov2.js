@@ -1,4 +1,4 @@
-import { Core, IQueuePayload } from "./core";
+import { Core, IQueuePayload } from "./core"
 
 export class RollableToy extends Core {
   /**
@@ -9,7 +9,7 @@ export class RollableToy extends Core {
    * @return         [description]
    */
   public roll(speed: number, heading: number, flags: number[]): Promise<IQueuePayload> {
-    return this.queueCommand(this.commands.driving.drive(speed, heading, flags));
+    return this.queueCommand(this.commands.driving.drive(speed, heading, flags))
   }
 
   /**
@@ -21,16 +21,16 @@ export class RollableToy extends Core {
    * @return         [description]
    */
   public async rollTime(speed: number, heading: number, time: number, flags: number[]) {
-    let drive = true;
-    setTimeout(() => (drive = false), time);
+    let drive = true
+    setTimeout(() => (drive = false), time)
     while (drive) {
-      await this.queueCommand(this.commands.driving.drive(speed, heading, flags));
+      await this.queueCommand(this.commands.driving.drive(speed, heading, flags))
     }
-    await this.queueCommand(this.commands.driving.drive(0, heading, flags));
+    await this.queueCommand(this.commands.driving.drive(0, heading, flags))
   }
 
   public allLEDsRaw(payload: number[]): Promise<IQueuePayload> {
-    return this.queueCommand(this.commands.userIo.allLEDsRaw(payload));
+    return this.queueCommand(this.commands.userIo.allLEDsRaw(payload))
   }
 
   /**
@@ -38,7 +38,7 @@ export class RollableToy extends Core {
    * @param  i intensity (0 to 255)
    */
   public setBackLedIntensity(i: number): Promise<IQueuePayload> {
-    return this.queueCommand(this.commands.userIo.setBackLedIntensity(i));
+    return this.queueCommand(this.commands.userIo.setBackLedIntensity(i))
   }
 
   /**
@@ -46,7 +46,7 @@ export class RollableToy extends Core {
    * @param  i intensity (0 to 255)
    */
   public setMainLedBlueIntensity(i: number): Promise<IQueuePayload> {
-    return this.queueCommand(this.commands.userIo.setMainLedBlueIntensity(i));
+    return this.queueCommand(this.commands.userIo.setMainLedBlueIntensity(i))
   }
 
   /**
@@ -57,7 +57,7 @@ export class RollableToy extends Core {
    * @return   [description]
    */
   public setMainLedColor(r: number, g: number, b: number): Promise<IQueuePayload> {
-    return this.queueCommand(this.commands.userIo.setMainLedColor(r, g, b));
+    return this.queueCommand(this.commands.userIo.setMainLedColor(r, g, b))
   }
 
   /**
@@ -65,7 +65,7 @@ export class RollableToy extends Core {
    * @param  i intensity (0 to 255)
    */
   public setMainLedGreenIntensity(i: number): Promise<IQueuePayload> {
-    return this.queueCommand(this.commands.userIo.setMainLedGreenIntensity(i));
+    return this.queueCommand(this.commands.userIo.setMainLedGreenIntensity(i))
   }
 
   /**
@@ -73,6 +73,6 @@ export class RollableToy extends Core {
    * @param  i intensity (0 to 255)
    */
   public setMainLedRedIntensity(i: number): Promise<IQueuePayload> {
-    return this.queueCommand(this.commands.userIo.setMainLedRedIntensity(i));
+    return this.queueCommand(this.commands.userIo.setMainLedRedIntensity(i))
   }
 }
