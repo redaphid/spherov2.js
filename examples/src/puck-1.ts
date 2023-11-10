@@ -150,6 +150,7 @@ const cmdPlay = async (toy: SpheroMini) => {
         if (shift) increment *= 5
         lockedRandom += increment
       },
+
       x: () => {
         if (ctrl) return (isRandomLocked = !isRandomLocked)
 
@@ -157,6 +158,7 @@ const cmdPlay = async (toy: SpheroMini) => {
         if (shift) increment *= 5
         lockedRandom -= increment
       },
+
       w: () => {
         if (ctrl) return (isSpeedLocked = !isSpeedLocked)
 
@@ -225,6 +227,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       j: jiggle,
       b: backAndForth,
     }
+
     if (keyToActionMap[key]) {
       keyToActionMap[key]()
     } else {
