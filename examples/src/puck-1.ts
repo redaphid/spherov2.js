@@ -6,6 +6,7 @@ import { starter } from "./utils/starter"
 
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const cmdPlay = async (toy: SpheroMini) => {
+
   toy.configureCollisionDetection(55, 55)
   let waitTime = 1
   let flashlight = false
@@ -58,11 +59,11 @@ const cmdPlay = async (toy: SpheroMini) => {
     })
   }
 
-  const jiggle = async () => {
+  const jiggle = () => {
     intervalTimes({ fn: async () => (heading += await random(-45, 45)) % 360, times: 100, interval: 250 })
   }
 
-  const backAndForth = async () => {
+  const backAndForth = () => {
     // go straight forward
     intervalTimes({ fn: async () => (speed = 255), times: 10000, interval: 100 })
     intervalTimes({ fn: async () => (heading += 180), times: 10000, interval: 5000 })
@@ -107,6 +108,7 @@ const cmdPlay = async (toy: SpheroMini) => {
 
   const collide = () => {
     if (timeSinceLastCollision < collisionTimeout) return // ignore collisions that are too close together
+
     timeSinceLastCollision = 0
     speed = 255
     heading += 180 //turn around
@@ -129,6 +131,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       q: () => {
         toy.setMainLedColor(0, 0, 0)
         if (ctrl) return (isCooldownLocked = !isCooldownLocked)
+
         let increment = 100
         if (shift) increment *= 5
         cooldown += increment
@@ -137,6 +140,7 @@ const cmdPlay = async (toy: SpheroMini) => {
       e: () => {
         toy.setMainLedColor(0, 0, 0)
         if (ctrl) return (isCooldownLocked = !isCooldownLocked)
+
         let increment = 100
         if (shift) increment *= 5
         cooldown -= increment
