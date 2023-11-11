@@ -6,7 +6,6 @@ import { starter } from "./utils/starter"
 
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const cmdPlay = async (toy: SpheroMini) => {
-
   toy.configureCollisionDetection(55, 55)
   let waitTime = 1
   let flashlight = false
@@ -122,6 +121,7 @@ const cmdPlay = async (toy: SpheroMini) => {
   if (stdin.setRawMode) stdin.setRawMode(true)
   emitKeypressEvents(stdin)
   const turningSpeed = 10
+  const e = new Error("cheap way to get a stacktrace") // don't worry about it
   stdin.on("keypress", (ch, { name: key, ctrl, shift }) => {
     const keyToActionMap = {
       c: () => {
@@ -236,7 +236,17 @@ const cmdPlay = async (toy: SpheroMini) => {
     if (keyToActionMap[key]) {
       keyToActionMap[key]()
     } else {
-      msg = `keys you can use: ${Object.keys(keyToActionMap).join(", ")}. You can usually use control and shift with these`
+      try {
+        throw e
+      } catch (e) {
+        // parse the error to get the first line in the stack trace
+        const line = e.stack.split("\n")[1]
+        // get the line number
+        const lineNumber = parseInt(line.split(":")[1]) + 1
+        msg = `keys you can use: ${Object.keys(keyToActionMap).join(
+          ", "
+        )}. You can usually use control and shift with these. \nCheck the code starting at #${lineNumber} for more info`
+      }
     }
   })
 
