@@ -58,11 +58,11 @@ const cmdPlay = async (toy: SpheroMini) => {
     })
   }
 
-  const jiggle = () => {
+  const jiggle = async () => {
     intervalTimes({ fn: async () => (heading += await random(-45, 45)) % 360, times: 100, interval: 250 })
   }
 
-  const backAndForth = () => {
+  const backAndForth = async () => {
     // go straight forward
     intervalTimes({ fn: async () => (speed = 255), times: 10000, interval: 100 })
     intervalTimes({ fn: async () => (heading += 180), times: 10000, interval: 5000 })
