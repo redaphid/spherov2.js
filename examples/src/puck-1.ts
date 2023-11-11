@@ -125,8 +125,9 @@ const cmdPlay = async (toy: SpheroMini) => {
   stdin.on("keypress", (ch, { name: key, ctrl, shift }) => {
     const keyToActionMap = {
       c: () => {
-        clearAllIntervals()
         if (ctrl) process.exit()
+
+        clearAllIntervals()
       },
       q: () => {
         toy.setMainLedColor(0, 0, 0)
