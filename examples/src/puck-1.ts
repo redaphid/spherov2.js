@@ -29,7 +29,9 @@ const cmdPlay = async (toy: SpheroMini) => {
 
   let boost = false
   let msg = ""
+
   // this is a hack to let us 'lock' the random value, and also push whatever is asking for a random value to the next tick in the event loop
+  // pushing it to the next tick prevents us from hitting the sphero with too many commands at once
   const random = async (min: number = 0, max: number = 1) => {
     let randomValue = isRandomLocked ? lockedRandom : Math.random()
     lockedRandom = randomValue
