@@ -152,11 +152,9 @@ const cmdPlay = async (toy: SpheroMini) => {
       },
 
       z: () => {
-        if (ctrl) return (isRandomLocked = !isRandomLocked)
-
-        let increment = 0.005
-        if (shift) increment *= 5
-        lockedRandom += increment
+        // zzzz sleep time.
+        if (ctrl) return cooldown = 20000
+        cooldown = 3000
       },
 
       x: () => {
@@ -164,6 +162,7 @@ const cmdPlay = async (toy: SpheroMini) => {
 
         let increment = 0.005
         if (shift) increment *= 5
+
         lockedRandom -= increment
       },
 
@@ -172,6 +171,7 @@ const cmdPlay = async (toy: SpheroMini) => {
 
         let increment = 10
         if (shift) increment *= 5
+
         speed += increment
         lockedSpeed = speed
       },
@@ -181,6 +181,7 @@ const cmdPlay = async (toy: SpheroMini) => {
 
         let increment = 10
         if (shift) increment *= 5
+
         speed -= increment
         lockedSpeed = speed
       },
