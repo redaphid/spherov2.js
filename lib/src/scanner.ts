@@ -53,7 +53,7 @@ export const findToys = async (toysType: IToyAdvertisement[]) => {
   return toys
 }
 
-const startToy = async (toy: Core) => {
+export const startToy = async (toy: Core) => {
   console.log("Starting...")
   await toy.start()
 

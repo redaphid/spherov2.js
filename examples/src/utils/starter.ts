@@ -12,20 +12,13 @@ export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
     for (const sphero of spheros) {
       console.log(`found: ${robotRegistry[sphero.id] || sphero.id}`)
 
-      if (!robotName) {
-        fn(sphero)
-        return
-      }
+      if (!robotName) return fn(sphero)
 
-      if (sphero.id === robotName || robotRegistry[sphero.id] === robotName) {
-        fn(sphero)
-        return
-      }
+      if (sphero.id === robotName || robotRegistry[sphero.id] === robotName) return fn(sphero)
       // lazy match the first few characters of id
-      if (robotName.endsWith("*") && sphero.id.startsWith(robotName.slice(0, -1))) {
-        fn(sphero)
-        return
-      }
+      if (robotName.endsWith("*") && sphero.id.startsWith(robotName.slice(0, -1))) return fn(sphero)
+
+
       console.log("but not the one we're looking for")
     }
     console.log("rescanning")
