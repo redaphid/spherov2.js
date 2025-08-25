@@ -1,12 +1,12 @@
 import { emitKeypressEvents } from "readline"
 import { stdin } from "process"
 
-import { SpheroMini, Event, DriveFlag } from "../../lib"
+import { SpheroMini, Event, DriveFlag, SensorData } from "../../lib"
 import { starter } from "./utils/starter"
 
 const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const cmdPlay = async (toy: SpheroMini) => {
-  toy.configureCollisionDetection(55, 55)
+  toy.configureCollisionDetection(10, 10, 10, 10, 10)
   let waitTime = 1
   let flashlight = false
   const collisionTimeout = 50
@@ -62,7 +62,7 @@ const cmdPlay = async (toy: SpheroMini) => {
   }
 
   const jiggle = async () => {
-    intervalTimes({ fn: async () => (heading += await random(-45, 45)) % 360, times: 100, interval: 250 })
+    intervalTimes({ fn: async () => (heading += await random(-45, 45)) % 360, times: 1000, interval: 25 })
   }
 
   const backAndForth = async () => {
@@ -80,9 +80,9 @@ const cmdPlay = async (toy: SpheroMini) => {
     timeSinceLastCollision += waitTime
     if (cooldown > 0) return (cooldown -= waitTime)
 
-    if ((await random()) < 0.01) return (cooldown = 500) // randomly sleep
-    if ((await random()) < 0.01) speed += 158 // randomly speed up
-    if ((await random()) < 0.15) heading += 10 // randomly turn around
+    if ((await random()) < 0.001) return (cooldown = 500) // randomly sleep
+    if ((await random()) < 0.001) speed += 158 // randomly speed up
+    if ((await random()) < 0.015) heading += 10 // randomly turn around
 
     speed = Math.max(0, speed - 1) // slow down over time
     if (timeSinceLastCollision > collisionTimeout) {
@@ -110,18 +110,21 @@ const cmdPlay = async (toy: SpheroMini) => {
     await toy.roll(speed, heading, boost ? [DriveFlag.boost] : [])
   }
 
-  const collide = () => {
+  const randInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1) + min)
+  const collide = (data: SensorData) => {
     if (timeSinceLastCollision < collisionTimeout) return // ignore collisions that are too close together
 
     timeSinceLastCollision = 0
     speed = 255
-    setTimeout(() => (speed = 25), 100) // stop after a second
-    heading += 210 //turn around
+    boost = true
+    setTimeout(() => (speed = 100), 20) // stop after a second
+    const gyro = data.gyro?.filtered ?? { x: 0, y: 0, z: 0 }
+    heading += gyro.x > 0 ? 90 : -90 //turn around
     cooldown = 0 // stop idling
     // turn the led red
-    toy.setMainLedColor(255, 0, 0)
+    toy.setMainLedColor(gyro.x, gyro.y, gyro.z)
   }
-
+  // jitter
   toy.on(Event.onCollision, collide)
 
   if (stdin.setRawMode) stdin.setRawMode(true)
