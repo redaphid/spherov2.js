@@ -1,4 +1,5 @@
 import { Scanner, Core, SpheroMini } from "../../../lib"
+import { getUniqueColor, flashIdentification } from "./colors"
 
 const robotName = process.env.ROBOT_NAME || undefined
 const robotRegistry = {
@@ -11,13 +12,26 @@ export const starter = async <T extends Core>(fn: (sphero: T) => void) => {
   const findAndStart = async () => {
     const spheros = await Scanner.findAll(SpheroMini.advertisement)
     for (const sphero of spheros) {
-      console.log(`found: ${robotRegistry[sphero.id] || sphero.id}`)
+      const name = robotRegistry[sphero.id] || sphero.id
+      console.log(`found: ${name}`)
 
-      if (!robotName) return fn(sphero)
-
-      if (sphero.id === robotName || robotRegistry[sphero.id] === robotName) return fn(sphero)
-      // lazy match the first few characters of id
-      if (robotName.endsWith("*") && sphero.id.startsWith(robotName.slice(0, -1))) return fn(sphero)
+      if (!robotName || sphero.id === robotName || robotRegistry[sphero.id] === robotName || 
+          (robotName.endsWith("*") && sphero.id.startsWith(robotName.slice(0, -1)))) {
+        
+        // Start the sphero connection first
+        await sphero.start()
+        console.log(`Connected to ${name}`)
+        
+        // Generate unique color based on the sphero's ID
+        const uniqueColor = getUniqueColor(sphero.id)
+        console.log(`Assigning color RGB(${uniqueColor.r}, ${uniqueColor.g}, ${uniqueColor.b}) to ${name}`)
+        
+        // Flash the unique color twice to identify the ball
+        await flashIdentification(sphero, uniqueColor, 2)
+        console.log(`${name} identified with its unique color`)
+        
+        return fn(sphero)
+      }
 
       console.log("but not the one we're looking for")
     }
