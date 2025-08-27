@@ -31,6 +31,9 @@
     "sensor-d2": "ts-node src/sensor D2",
     "sensor": "ts-node src/sensor",
     "game": "ts-node src/game",
+    "room-mapper": "ts-node src/room-mapper",
+    "sensor-stats": "ts-node src/sensor-stats",
+    "svg": "ts-node src/map-to-svg.ts",
     "prettier": "lint-staged",
     "serve": "http-server .",
     "test": "echo 'No tests for examples'"
