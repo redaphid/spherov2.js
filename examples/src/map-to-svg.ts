@@ -273,28 +273,27 @@ const inferWalls = (collisions: Collision[]): Array<{start: Point, end: Point}> 
 // Main CLI
 const main = () => {
   const args = process.argv.slice(2)
+  let inputFile: string
   
   if (args.length === 0) {
-    console.log("Usage: npx ts-node map-to-svg.ts <room_map.json>")
-    console.log("\nConverts room mapping JSON to SVG visualization")
-    console.log("\nExample: npx ts-node map-to-svg.ts room_map_1234567890.json")
-    
-    // Try to find the most recent room_map file
+    // Find the most recent room-map JSON file
     const files = fs.readdirSync('.')
-      .filter(f => f.startsWith('room_map_') && f.endsWith('.json'))
-      .sort()
-      .reverse()
+      .filter(f => f.startsWith('room-map-') && f.endsWith('.json'))
+      .map(f => ({ name: f, time: fs.statSync(f).mtime.getTime() }))
+      .sort((a, b) => b.time - a.time)
     
-    if (files.length > 0) {
-      console.log(`\nFound room map files:`)
-      files.slice(0, 5).forEach(f => console.log(`  - ${f}`))
-      console.log(`\nTry: npx ts-node src/map-to-svg.ts ${files[0]}`)
+    if (files.length === 0) {
+      console.error('No room-map JSON files found. Run room-mapper first.')
+      console.error('Usage: yarn svg [json-file]')
+      console.error('  If no file specified, uses the most recent room-map-*.json')
+      process.exit(1)
     }
     
-    process.exit(1)
+    inputFile = files[0].name
+    console.log(`Using most recent file: ${inputFile}`)
+  } else {
+    inputFile = args[0]
   }
-  
-  const inputFile = args[0]
   
   if (!fs.existsSync(inputFile)) {
     console.error(`Error: File '${inputFile}' not found`)

@@ -35,6 +35,12 @@ interface Collision {
 interface RoomMap {
   collisions: Collision[]
   path: Point[]
+  paths?: {
+    locator?: Point[]
+    accelerometer?: Point[]
+    gyro?: Point[]
+    combined?: Point[]
+  }
   boundary: {
     minX: number
     maxX: number
@@ -61,6 +67,14 @@ let initialPosition: { x: number, y: number } | null = null
 let positionSamples: Array<{ x: number, y: number, timestamp: number }> = []
 const PATH_SAMPLE_INTERVAL = 2000 // Record path point every 2 seconds
 const MIN_DISTANCE_FOR_PATH = 50 // Minimum distance to record new path point
+const POSITION_SAMPLE_SIZE = 10 // Number of samples to average
+let lastRecordedPosition: { x: number, y: number } | null = null
+
+// Track position using different methods
+let accelerometerPosition = { x: 0, y: 0 }
+let gyroPosition = { x: 0, y: 0 }
+let lastVelocity = { x: 0, y: 0 }
+let lastGyroTime = Date.now()
 
 // Dynamic collision detection thresholds
 let accelerometerBaseline = { x: 0, y: 0, z: 0 }
@@ -71,6 +85,12 @@ let movementThreshold = 20 // Distance threshold for stuck detection
 const roomMap: RoomMap = {
   collisions: [],
   path: [],
+  paths: {
+    locator: [],
+    accelerometer: [],
+    gyro: [],
+    combined: []
+  },
   boundary: {
     minX: 0,
     maxX: 0,
@@ -177,7 +197,7 @@ const detectCollisionFromSensor = (data: SensorData): boolean => {
   return deviation > collisionThreshold || gyroMagnitude > 100
 }
 
-const handleCollisionDetected = async (toy: RollableToy, detectionMethod: 'built-in' | 'sensor-based') => {
+const handleCollisionDetected = async (toy: RollableToy, detectionMethod: 'built-in' | 'sensor-based', strength?: number) => {
   const now = Date.now()
   
   // Debounce collisions
@@ -186,6 +206,24 @@ const handleCollisionDetected = async (toy: RollableToy, detectionMethod: 'built
   isHandlingCollision = true
   lastCollisionTime = now
   
+  // Calculate collision strength if not provided
+  let collisionStrength = strength || 1
+  if (!strength && lastSensorData) {
+    // Calculate strength based on accelerometer magnitude
+    const magnitude = calculateMagnitude(
+      lastSensorData.accelerometer.filtered.x,
+      lastSensorData.accelerometer.filtered.y,
+      lastSensorData.accelerometer.filtered.z
+    )
+    const baselineMagnitude = calculateMagnitude(
+      accelerometerBaseline.x,
+      accelerometerBaseline.y,
+      accelerometerBaseline.z
+    )
+    // Normalize strength (0-10 scale)
+    collisionStrength = Math.min(10, Math.max(1, (magnitude / baselineMagnitude) - 1))
+  }
+  
   const collision: Collision = {
     position: {
       x: currentX,
@@ -193,7 +231,7 @@ const handleCollisionDetected = async (toy: RollableToy, detectionMethod: 'built
       timestamp: now
     },
     heading: currentHeading,
-    strength: 1,
+    strength: collisionStrength,
     detectionMethod
   }
   
@@ -219,7 +257,7 @@ const handleCollisionDetected = async (toy: RollableToy, detectionMethod: 'built
   }
   
   roomMap.collisions.push(collision)
-  console.log(`\n🔴 Collision detected (${detectionMethod}) at (${collision.position.x.toFixed(0)}, ${collision.position.y.toFixed(0)})`)
+  console.log(`\n🔴 Collision detected (${detectionMethod}) at (${collision.position.x.toFixed(0)}, ${collision.position.y.toFixed(0)}) - Strength: ${collisionStrength.toFixed(1)}`)
   
   // Calculate optimal escape heading using sensor data
   if (lastSensorData) {
@@ -317,13 +355,47 @@ const roomMapper = async (toy: RollableToy) => {
     const now = Date.now()
     positionSamples.push({ x: currentX, y: currentY, timestamp: now })
     
+    // Keep only recent samples
+    if (positionSamples.length > POSITION_SAMPLE_SIZE) {
+      positionSamples = positionSamples.slice(-POSITION_SAMPLE_SIZE)
+    }
+    
+    // Calculate averaged position if we have enough samples
+    if (positionSamples.length >= 5) {
+      const avgX = positionSamples.reduce((sum, s) => sum + s.x, 0) / positionSamples.length
+      const avgY = positionSamples.reduce((sum, s) => sum + s.y, 0) / positionSamples.length
+      currentX = avgX
+      currentY = avgY
+    }
+    
+    // Update accelerometer-based position (integrate acceleration)
+    const dt = (now - lastGyroTime) / 1000 // Convert to seconds
+    if (dt > 0 && dt < 1) { // Sanity check
+      const accelX = data.accelerometer.filtered.x
+      const accelY = data.accelerometer.filtered.y
+      
+      // Update velocity (v = v0 + a*t)
+      lastVelocity.x += accelX * dt * 100 // Scale factor for visibility
+      lastVelocity.y += accelY * dt * 100
+      
+      // Update position (x = x0 + v*t)
+      accelerometerPosition.x += lastVelocity.x * dt
+      accelerometerPosition.y += lastVelocity.y * dt
+      
+      // Update gyro-based position (use heading and assumed velocity)
+      const headingRad = currentHeading * Math.PI / 180
+      const assumedSpeed = 50 // Assume constant speed when moving
+      gyroPosition.x += Math.cos(headingRad) * assumedSpeed * dt
+      gyroPosition.y += Math.sin(headingRad) * assumedSpeed * dt
+    }
+    lastGyroTime = now
+    
     // Check for collision using sensor data
     if (!isHandlingCollision && detectCollisionFromSensor(data)) {
       handleCollisionDetected(toy, 'sensor-based')
     }
     
     // Check if stuck (not moving enough)
-    const now = Date.now()
     if (now - lastMovementCheck > 1000 && !isHandlingCollision) {
       const distance = Math.sqrt(
         Math.pow(currentX - lastKnownPosition.x, 2) +
@@ -362,15 +434,62 @@ const roomMapper = async (toy: RollableToy) => {
       lastMovementCheck = now
     }
     
-    // Record path point every 500ms
-    if (now - lastSensorUpdate > 500) {
-      lastSensorUpdate = now
-      path.push({
-        x: currentX,
-        y: currentY,
-        timestamp: now
-      })
-      updateBoundary()
+    // Record path point with intelligent sampling
+    if (now - lastSensorUpdate > PATH_SAMPLE_INTERVAL) {
+      // Only record if we've moved significantly from last recorded position
+      if (!lastRecordedPosition || 
+          Math.sqrt(
+            Math.pow(currentX - lastRecordedPosition.x, 2) + 
+            Math.pow(currentY - lastRecordedPosition.y, 2)
+          ) > MIN_DISTANCE_FOR_PATH) {
+        
+        lastSensorUpdate = now
+        lastRecordedPosition = { x: currentX, y: currentY }
+        
+        // Use averaged position for main path
+        path.push({
+          x: currentX,
+          y: currentY,
+          timestamp: now
+        })
+        
+        // Record different sensor paths
+        if (roomMap.paths) {
+          roomMap.paths.locator?.push({
+            x: currentX,
+            y: currentY,
+            timestamp: now
+          })
+          
+          roomMap.paths.accelerometer?.push({
+            x: accelerometerPosition.x,
+            y: accelerometerPosition.y,
+            timestamp: now
+          })
+          
+          roomMap.paths.gyro?.push({
+            x: gyroPosition.x,
+            y: gyroPosition.y,
+            timestamp: now
+          })
+          
+          // Combined approach: weighted average
+          const combinedX = currentX * 0.5 + accelerometerPosition.x * 0.25 + gyroPosition.x * 0.25
+          const combinedY = currentY * 0.5 + accelerometerPosition.y * 0.25 + gyroPosition.y * 0.25
+          roomMap.paths.combined?.push({
+            x: combinedX,
+            y: combinedY,
+            timestamp: now
+          })
+        }
+        
+        updateBoundary()
+        
+        // Log less frequently
+        if (path.length % 5 === 0) {
+          console.log(`📍 Position recorded: (${currentX.toFixed(0)}, ${currentY.toFixed(0)}) - ${path.length} points`)
+        }
+      }
     }
   })
   

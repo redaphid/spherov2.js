@@ -1,3 +1,5 @@
 *.json
 *.svg
 .playwright*
+.playwright*
+room-map-viewer.html

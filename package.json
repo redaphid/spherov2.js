@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "game": "yarn workspace spherov2.js-examples run game",
+    "svg": "yarn workspace spherov2.js-examples run svg",
     "npm": "npm",
     "release": "release-it",
     "test": "yarn workspaces run test",
